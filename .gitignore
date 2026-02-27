@@ -1,0 +1,45 @@
+# --- Python / Bottle (основа) ---
+# Виртуальные окружения (обычно venv или env)
+venv/
+.venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# --- Visual Studio (настройки и кэш) ---
+# Папка .vs (пользовательские настройки, открытые файлы)
+.vs/
+# Файлы решений и проектов
+*.sln
+*.suo
+*.user
+*.pdb
+*.pyproj
+*.userprefs
+
+# --- Логи и базы данных ---
+*.log
+*.db
+*.sqlite3
+
+# --- Разное ---
+.env
+.idea/
+.vscode/
