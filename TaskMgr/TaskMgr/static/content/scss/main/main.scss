@@ -1,5 +1,9 @@
 @use "./../value/token" as *;
-// ===== Base =====
+
+// =====================
+// Base
+// =====================
+
 html, body {
     height: 100%;
     margin: 0;
@@ -11,6 +15,10 @@ body {
     background: $main-bg;
     color: $main-tc;
 }
+
+// =====================
+// Window
+// =====================
 
 .window {
     min-height: 700px;
@@ -33,7 +41,10 @@ body {
     }
 }
 
-// ===== Window buttons =====
+// =====================
+// Window buttons
+// =====================
+
 .wm-btn {
     border: 0;
     background: transparent;
@@ -55,7 +66,10 @@ body {
     }
 }
 
-// ===== Layout (3 columns) =====
+// =====================
+// Layout
+// =====================
+
 .content {
     height: calc(100% - 40px);
     display: grid;
@@ -65,7 +79,10 @@ body {
     box-sizing: border-box;
 }
 
-// ===== Panels =====
+// =====================
+// Panels
+// =====================
+
 .panel {
     border: 2px solid $border-color;
     background: $axiliry-bg;
@@ -81,7 +98,10 @@ body {
     }
 }
 
-// ===== Left panel =====
+// =====================
+// Left panel
+// =====================
+
 .left-panel {
     display: grid;
     grid-template-rows: auto auto auto 1fr;
@@ -115,7 +135,7 @@ body {
     background: $blue-hl;
     color: $main-tc;
     cursor: pointer;
-    margin: 0 0 8px 0;
+    margin-bottom: 8px;
 
     &:hover {
         background: $hover-color;
@@ -134,7 +154,6 @@ body {
     font-weight: bold;
     font-size: 22px;
     padding: 10px 12px;
-    box-sizing: border-box;
 }
 
 .notes-box {
@@ -142,7 +161,6 @@ body {
     border-radius: 0 0 0 9px;
     background: $axiliry-bg;
     padding: 10px;
-    box-sizing: border-box;
 
     textarea {
         width: 100%;
@@ -157,7 +175,10 @@ body {
     }
 }
 
-// ===== Calendar =====
+// =====================
+// Calendar
+// =====================
+
 .calendar-panel {
     display: grid;
     grid-template-rows: auto 1fr;
@@ -165,11 +186,9 @@ body {
 
 .calendar-body {
     padding: 10px 12px 14px 12px;
-    box-sizing: border-box;
 }
 
 .nd-label {
-    color: $main-tc;
     font-weight: bold;
     font-size: 16px;
     padding: 8px 0;
@@ -179,19 +198,167 @@ body {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 10px;
-    margin: 0 0 10px 0;
+    margin-bottom: 10px;
 }
 
+// =====================
+// Day Card
+// =====================
+
 .day-card {
-    background: $main-bg;
-    border: 1px solid $border-color;
-    border-radius: 10px;
-    min-height: 90px;
-    padding: 8px;
+    width: 120px;
+    height: 280px;
+    background: #242326;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 6px 8px;
     box-sizing: border-box;
-    color: $main-tc;
-    font-size: 13px;
+    position: relative;
 }
+
+.day-card__line {
+    height: 1px;
+    width: 100%;
+    background: rgba(255,255,255,0.25);
+
+    &--top {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    &--bottom {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+    }
+}
+
+.day-card__header {
+    position: relative;
+    padding-top: 4px;
+    padding-bottom: 6px;
+    min-height: 34px;
+}
+
+.day-card__weekday {
+    text-align: center;
+    font-size: 14px;
+}
+
+.day-card__number {
+    position: absolute;
+    right: 0;
+    top: 0;
+    font-size: 14px;
+}
+
+// =====================
+// Lessons (Vertical)
+// =====================
+
+.day-card__lessons {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 6px;
+    padding: 6px 0;
+}
+
+// если уроков нет — центрируем "+"
+.day-card--empty .day-card__lessons {
+    justify-content: center;
+}
+
+// =====================
+// Lesson button
+// =====================
+
+.lesson-btn {
+    width: 100%;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.06);
+    color: white;
+    border-radius: 6px;
+    padding: 6px 8px;
+    cursor: pointer;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 12px;
+    text-align: left;
+
+    &:hover {
+        background: rgba(255,255,255,0.10);
+    }
+
+    &:active {
+        background: rgba(255,255,255,0.14);
+    }
+}
+
+.lesson-btn__time {
+    opacity: 0.85;
+    white-space: nowrap;
+}
+
+.lesson-btn__title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+// =====================
+// Plus button
+// =====================
+
+.day-card__add-btn {
+    width: 100%;
+    height: 26px;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: transparent;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+
+    &:hover {
+        background: rgba(255,255,255,0.10);
+    }
+
+    &:active {
+        background: rgba(255,255,255,0.14);
+    }
+}
+
+// =====================
+// Bottom section
+// =====================
+
+.day-card__shift {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    margin-top: 6px;
+}
+
+.day-card__checkbox {
+    width: 14px;
+    height: 14px;
+}
+
+.day-card__shift-label {
+    font-size: 12px;
+}
+
+// =====================
+// Week navigation
+// =====================
 
 .week-nav {
     width: 160px;
@@ -207,7 +374,6 @@ body {
     background: transparent;
     color: $main-tc;
     cursor: pointer;
-    font-size: 16px;
 
     &:hover {
         color: $hover-color;
@@ -216,28 +382,24 @@ body {
 
 .month-year {
     text-align: center;
-    color: $main-tc;
     font-size: 14px;
 }
 
-// ===== Info panel =====
+// =====================
+// Info panel
+// =====================
+
 .info-panel {
     display: grid;
     grid-template-rows: auto 1fr;
-    border-radius: 0 0 9px 0;
 }
 
 .info-body {
     padding: 10px 12px;
-    box-sizing: border-box;
-    color: $main-tc;
 }
 
 .placeholder {
-    display: block;
-    color: $main-tc;
     font-size: 20px;
     font-weight: 300;
     line-height: 1.2;
-    padding: 12px 4px;
 }
