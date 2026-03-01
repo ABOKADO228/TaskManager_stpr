@@ -44,3 +44,5 @@ wheels/
 .idea/
 .vscode/
 */node_modules
+TaskMgr/TaskMgr/node_modules
+TaskMgr/TaskMgr/verify
