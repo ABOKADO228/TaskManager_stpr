@@ -2,35 +2,35 @@
 This script runs the application using a development server.
 """
 
-import bottle
 import os
 import sys
+import bottle
+from bottle import TEMPLATE_PATH
 
-import routes
+# 1) СНАЧАЛА настраиваем пути
 
-if '--debug' in sys.argv[1:] or 'SERVER_DEBUG' in os.environ:
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # ...\TaskMgr\TaskMgr
+TEMPLATE_PATH.insert(0, os.path.join(BASE_DIR, "views"))
+
+PROJECT_ROOT = BASE_DIR
+STATIC_ROOT = os.path.join(PROJECT_ROOT, "static")
+
+# 2) ПОТОМ импортируем routes (они уже увидят TEMPLATE_PATH)
+
+import routes  # noqa: E402
+
+if "--debug" in sys.argv[1:] or "SERVER_DEBUG" in os.environ:
     bottle.debug(True)
 
-def wsgi_app():
-    """Returns the application to make available through wfastcgi. This is used
-    when the site is published to Microsoft Azure."""
-    return bottle.default_app()
+@bottle.route("/static/<filepath:path>")
+def server_static(filepath):
+    return bottle.static_file(filepath, root=STATIC_ROOT)
 
-if __name__ == '__main__':
-    PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
-    STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static').replace('\\', '/')
-    HOST = os.environ.get('SERVER_HOST', 'localhost')
+if __name__ == "__main__":
+    HOST = os.environ.get("SERVER_HOST", "localhost")
     try:
-        PORT = int(os.environ.get('SERVER_PORT', '5555'))
+        PORT = int(os.environ.get("SERVER_PORT", "5555"))
     except ValueError:
         PORT = 5555
 
-    @bottle.route('/static/<filepath:path>')
-    def server_static(filepath):
-        """Handler for static files, used with the development server.
-        When running under a production server such as IIS or Apache,
-        the server should be configured to serve the static files."""
-        return bottle.static_file(filepath, root=STATIC_ROOT)
-
-    # Starts a local test server.
-    bottle.run(server='wsgiref', host=HOST, port=PORT)
+    bottle.run(server="wsgiref", host=HOST, port=PORT, debug=True, reloader=True)
