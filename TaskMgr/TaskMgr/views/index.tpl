@@ -5,7 +5,7 @@
 <html lang="ru">
 <head>
     <link rel="stylesheet" href="css/tokens.css">
-    <link rel="stylesheet" type="text/css" href="/static/content/AuthReg/Auth.css" />
+    <link rel="stylesheet" href="/static/content/AuthReg/Auth.css" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Start</title>

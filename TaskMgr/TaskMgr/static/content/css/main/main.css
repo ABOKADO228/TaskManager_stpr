@@ -1,17 +1,229 @@
-/* Error: Undefined variable.
- *    ,
- * 27 |         background: $borderColor;
- *    |                     ^^^^^^^^^^^^
- *    '
- *   static\content\scss\main\main.scss 27:21  root stylesheet */
-
-body::before {
-  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono",
-      "Droid Sans Mono", monospace, monospace;
-  white-space: pre;
-  display: block;
-  padding: 1em;
-  margin-bottom: 1em;
-  border-bottom: 2px solid black;
-  content: "Error: Undefined variable.\a    \2577 \a 27 \2502          background: $borderColor;\d\a    \2502                      ^^^^^^^^^^^^\a    \2575 \a   static\\content\\scss\\main\\main.scss 27:21  root stylesheet";
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
+
+body {
+  font-family: Arial, sans-serif;
+  background: #1c1c1c;
+  color: #FFFFFF;
+}
+
+.window {
+  min-height: 700px;
+  min-width: 1400px;
+  width: 1550px;
+  height: 800px;
+  border: 1px solid #FFFFFF;
+  overflow: hidden;
+  background: #1c1c1c;
+  box-sizing: border-box;
+}
+.window-menu {
+  height: 40px;
+  background: #2a2a2a;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+
+.wm-btn {
+  border: 0;
+  background: transparent;
+  color: #FFFFFF;
+  font-size: 16px;
+  width: 38px;
+  height: 30px;
+  cursor: pointer;
+  border-radius: 6px;
+}
+.wm-btn:hover {
+  background: #FFFFFF;
+  color: #000000;
+}
+.wm-btn.close:hover {
+  background: #c71d4c;
+  color: #FFFFFF;
+}
+
+.content {
+  height: calc(100% - 40px);
+  display: grid;
+  grid-template-columns: 2fr 6fr 2fr;
+  gap: 12px;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.panel {
+  border: 2px solid #FFFFFF;
+  background: #2a2a2a;
+  box-sizing: border-box;
+}
+.panel-header {
+  background: #324990;
+  color: #FFFFFF;
+  font-weight: bold;
+  font-size: 22px;
+  padding: 10px 12px;
+  box-sizing: border-box;
+}
+
+.left-panel {
+  display: grid;
+  grid-template-rows: auto auto auto 1fr;
+  gap: 10px;
+}
+
+.name-block {
+  background: #324990;
+  color: #FFFFFF;
+  font-weight: bold;
+  font-size: 16px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  box-sizing: border-box;
+}
+
+.data-actions {
+  padding: 10px 12px;
+  background: #2a2a2a;
+  border: 2px solid #FFFFFF;
+  box-sizing: border-box;
+}
+
+.menu-btn {
+  width: 100%;
+  height: 40px;
+  border: 0;
+  border-radius: 8px;
+  background: #324990;
+  color: #FFFFFF;
+  cursor: pointer;
+  margin: 0 0 8px 0;
+}
+.menu-btn:hover {
+  background: #FFFFFF;
+  color: #000000;
+}
+.menu-btn:active {
+  background: #FFFFFF;
+  color: #000000;
+}
+
+.notes-title {
+  background: #324990;
+  color: #FFFFFF;
+  font-weight: bold;
+  font-size: 22px;
+  padding: 10px 12px;
+  box-sizing: border-box;
+}
+
+.notes-box {
+  border: 2px solid #324990;
+  border-radius: 0 0 0 9px;
+  background: #2a2a2a;
+  padding: 10px;
+  box-sizing: border-box;
+}
+.notes-box textarea {
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+  resize: none;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: #FFFFFF;
+  font-size: 14px;
+}
+
+.calendar-panel {
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+.calendar-body {
+  padding: 10px 12px 14px 12px;
+  box-sizing: border-box;
+}
+
+.nd-label {
+  color: #FFFFFF;
+  font-weight: bold;
+  font-size: 16px;
+  padding: 8px 0;
+}
+
+.days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  margin: 0 0 10px 0;
+}
+
+.day-card {
+  background: #1c1c1c;
+  border: 1px solid #FFFFFF;
+  border-radius: 10px;
+  min-height: 90px;
+  padding: 8px;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  font-size: 13px;
+}
+
+.week-nav {
+  width: 160px;
+  margin: 10px auto;
+  display: grid;
+  grid-template-columns: 1fr 6fr 1fr;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-btn {
+  border: 0;
+  background: transparent;
+  color: #FFFFFF;
+  cursor: pointer;
+  font-size: 16px;
+}
+.nav-btn:hover {
+  color: #FFFFFF;
+}
+
+.month-year {
+  text-align: center;
+  color: #FFFFFF;
+  font-size: 14px;
+}
+
+.info-panel {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  border-radius: 0 0 9px 0;
+}
+
+.info-body {
+  padding: 10px 12px;
+  box-sizing: border-box;
+  color: #FFFFFF;
+}
+
+.placeholder {
+  display: block;
+  color: #FFFFFF;
+  font-size: 20px;
+  font-weight: 300;
+  line-height: 1.2;
+  padding: 12px 4px;
+}
+
+/*# sourceMappingURL=main.css.map */

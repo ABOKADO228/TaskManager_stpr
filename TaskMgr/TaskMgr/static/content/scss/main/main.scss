@@ -1,7 +1,6 @@
-@use "./../value/token" as token;
+@use "./../value/token" as *;
 // ===== Base =====
-html,
-body {
+html, body {
     height: 100%;
     margin: 0;
     padding: 0;
@@ -9,6 +8,8 @@ body {
 
 body {
     font-family: Arial, sans-serif;
+    background: $main-bg;
+    color: $main-tc;
 }
 
 .window {
@@ -16,15 +17,14 @@ body {
     min-width: 1400px;
     width: 1550px;
     height: 800px;
-    border: 1px solid #1f1f1f;
+    border: 1px solid $border-color;
     overflow: hidden;
-    background: token.$main-bg;
+    background: $main-bg;
     box-sizing: border-box;
-    // Верхнее меню окна: .window-menu 
-    &-menu
-    {
+
+    &-menu {
         height: 40px;
-        background: $borderColor;
+        background: $axiliry-bg;
         display: flex;
         align-items: center;
         justify-content: flex-end;
@@ -37,7 +37,7 @@ body {
 .wm-btn {
     border: 0;
     background: transparent;
-    color: #ffffff;
+    color: $main-tc;
     font-size: 16px;
     width: 38px;
     height: 30px;
@@ -45,11 +45,13 @@ body {
     border-radius: 6px;
 
     &:hover {
-        background: rgba(255, 255, 255, 0.12);
+        background: $hover-color;
+        color: $accent-tc;
     }
 
     &.close:hover {
-        background: rgba(255, 0, 0, 0.35);
+        background: $red-hl;
+        color: $main-tc;
     }
 }
 
@@ -65,13 +67,13 @@ body {
 
 // ===== Panels =====
 .panel {
-    border: 2px solid $borderColor;
-    background: $panelBg;
+    border: 2px solid $border-color;
+    background: $axiliry-bg;
     box-sizing: border-box;
 
     &-header {
-        background: $panelHeaderBg;
-        color: #ffffff;
+        background: $blue-hl;
+        color: $main-tc;
         font-weight: bold;
         font-size: 22px;
         padding: 10px 12px;
@@ -87,8 +89,8 @@ body {
 }
 
 .name-block {
-    background: $panelHeaderBg;
-    color: #ffffff;
+    background: $blue-hl;
+    color: $main-tc;
     font-weight: bold;
     font-size: 16px;
     height: 42px;
@@ -100,8 +102,8 @@ body {
 
 .data-actions {
     padding: 10px 12px;
-    background: $panelBg;
-    border: 2px solid $borderColor;
+    background: $axiliry-bg;
+    border: 2px solid $border-color;
     box-sizing: border-box;
 }
 
@@ -110,19 +112,25 @@ body {
     height: 40px;
     border: 0;
     border-radius: 8px;
-    background: #2d2d2d;
-    color: #ffffff;
+    background: $blue-hl;
+    color: $main-tc;
     cursor: pointer;
     margin: 0 0 8px 0;
 
     &:hover {
-        background: #3a3a3a;
+        background: $hover-color;
+        color: $accent-tc;
+    }
+
+    &:active {
+        background: $clicked-color;
+        color: $accent-tc;
     }
 }
 
 .notes-title {
-    background: $panelHeaderBg;
-    color: #ffffff;
+    background: $blue-hl;
+    color: $main-tc;
     font-weight: bold;
     font-size: 22px;
     padding: 10px 12px;
@@ -130,9 +138,9 @@ body {
 }
 
 .notes-box {
-    border: 2px solid $panelHeaderBg;
+    border: 2px solid $blue-hl;
     border-radius: 0 0 0 9px;
-    background: $panelBg;
+    background: $axiliry-bg;
     padding: 10px;
     box-sizing: border-box;
 
@@ -144,7 +152,7 @@ body {
         border: 0;
         outline: none;
         background: transparent;
-        color: #ffffff;
+        color: $main-tc;
         font-size: 14px;
     }
 }
@@ -161,7 +169,7 @@ body {
 }
 
 .nd-label {
-    color: #ffffff;
+    color: $main-tc;
     font-weight: bold;
     font-size: 16px;
     padding: 8px 0;
@@ -175,13 +183,13 @@ body {
 }
 
 .day-card {
-    background: #1d1d1d;
-    border: 1px solid $borderColor;
+    background: $main-bg;
+    border: 1px solid $border-color;
     border-radius: 10px;
     min-height: 90px;
     padding: 8px;
     box-sizing: border-box;
-    color: #cfcfcf;
+    color: $main-tc;
     font-size: 13px;
 }
 
@@ -197,14 +205,18 @@ body {
 .nav-btn {
     border: 0;
     background: transparent;
-    color: #ffffff;
+    color: $main-tc;
     cursor: pointer;
     font-size: 16px;
+
+    &:hover {
+        color: $hover-color;
+    }
 }
 
 .month-year {
     text-align: center;
-    color: #ffffff;
+    color: $main-tc;
     font-size: 14px;
 }
 
@@ -218,12 +230,12 @@ body {
 .info-body {
     padding: 10px 12px;
     box-sizing: border-box;
-    color: #ffffff;
+    color: $main-tc;
 }
 
 .placeholder {
     display: block;
-    color: #bdbdbd;
+    color: $main-tc;
     font-size: 20px;
     font-weight: 300;
     line-height: 1.2;

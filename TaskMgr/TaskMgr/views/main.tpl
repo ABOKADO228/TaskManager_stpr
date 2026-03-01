@@ -5,7 +5,8 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>Week Calendar</title>
-    <link rel="stylesheet" href="/static/main/main.css" />
+    <link rel="stylesheet" href="css/tokens.css">
+    <link rel="stylesheet" href="/static/content/css/main/main.css">
   </head>
 
   <body>
