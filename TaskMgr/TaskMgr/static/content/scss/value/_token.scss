@@ -6,7 +6,7 @@ $highlight-bg: #FFFFFF;
 $red-hl: #c71d4c;
 $blue-hl: #324990;
 
-$border-color: #FFFFFF;
+$border-color: $highlight-bg;
 
 $main-tc: #FFFFFF;
 $accent-tc: #000000;
