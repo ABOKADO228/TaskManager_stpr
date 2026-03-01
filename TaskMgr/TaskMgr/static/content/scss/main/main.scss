@@ -50,7 +50,7 @@ body {
 .panel {
     display: flex;
     flex-direction: column;
-    background: $axiliry-bg;
+    background: #1c1c1c;
     box-sizing: border-box;
 }
 
@@ -62,7 +62,12 @@ body {
     padding: 10px 12px;
 }
 
-.info-body,
+.info-body{
+    flex: 1;
+    overflow: auto;
+    padding: 10px 12px;
+    background: $axiliry-bg;
+}
 .calendar-body {
     flex: 1;
     overflow: auto;
@@ -147,7 +152,7 @@ body {
 
 .days-grid {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7, minmax(0,1fr));
     gap: 10px;
     margin-bottom: 10px;
 }
@@ -156,8 +161,12 @@ body {
 /* Day Card */
 /* ===================== */
 
+.day-card--empty{
+
+}
+
 .day-card {
-    background: #242326;
+    background: $axiliry-bg;
     color: white;
     display: flex;
     flex-direction: column;
@@ -170,7 +179,8 @@ body {
 .day-card__line {
     height: 1px;
     width: 100%;
-    background: rgba(255,255,255,0.25);
+    padding: 0;
+    background: $border-axilirt;
 }
 
 .day-card__line--top {
@@ -180,7 +190,7 @@ body {
 }
 
 .day-card__line--bottom {
-    position: absolute;
+    position: relative;
     bottom: 0;
     left: 0;
 }
@@ -222,10 +232,10 @@ body {
 
 .lesson-btn {
     width: 100%;
-    border: 0;
+    border: 1px;
+    border-bottom: 1px solid $border-axilirt;
     background: transparent;
     color: white;
-    border-radius: 6px;
     padding: 6px 8px;
     cursor: pointer;
     display: flex;
@@ -233,6 +243,7 @@ body {
     font-size: 12px;
     text-align: left;
     transition: 0.2s;
+    word-wrap: normal;
 
     &:hover {
         background: rgba(255,255,255,0.1);
@@ -245,12 +256,13 @@ body {
 
 .lesson-btn__time {
     opacity: 0.8;
+    font-size: 10px;
 }
 
 .day-card__add-btn {
     width: 100%;
     height: 26px;
-    border: 1px solid rgba(255,255,255,0.2);
+    border: 0;
     background: transparent;
     color: white;
     border-radius: 6px;
@@ -260,18 +272,6 @@ body {
     &:hover {
         background: rgba(255,255,255,0.1);
     }
-}
-
-/* ===================== */
-/* Bottom section */
-/* ===================== */
-
-.day-card__shift {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    margin-top: 6px;
 }
 
 /* ===================== */

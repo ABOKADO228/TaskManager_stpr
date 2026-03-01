@@ -69,12 +69,7 @@ function dayCardHtml(day, week, dayIndex) {
         <button class="day-card__add-btn" type="button"
           data-week="${week}" data-day="${dayIndex}">+</button>
       </div>
-
-      <div class="day-card__shift">
-        <input type="checkbox" class="day-card__checkbox" ${day.shift ? "checked" : ""} />
-        <span class="day-card__shift-label">Замены</span>
-      </div>
-
+      
       <div class="day-card__line day-card__line--bottom"></div>
     </div>
   `;
@@ -99,7 +94,8 @@ document.addEventListener("click", (e) => {
     if (addBtn) {
         const week = addBtn.dataset.week;
         const dayIndex = Number(addBtn.dataset.day);
-        const list = week === "numerator" ? data.numerator : data.denominator;
+        const list = week
+        === "numerator" ? data.numerator : data.denominator;
 
         list[dayIndex].lessons.push({ title: "Новый предмет", time: "00:00" });
         rerender();
@@ -124,7 +120,8 @@ document.addEventListener("change", (e) => {
     const card = cb.closest(".day-card");
     const week = card.dataset.week;
     const dayIndex = Number(card.dataset.day);
-    const list = week === "numerator" ? data.numerator : data.denominator;
+    const list = week
+    === "numerator" ? data.numerator : data.denominator;
 
     list[dayIndex].shift = cb.checked;
 });

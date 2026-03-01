@@ -44,7 +44,7 @@ body {
 .panel {
   display: flex;
   flex-direction: column;
-  background: #2a2a2a;
+  background: #1c1c1c;
   box-sizing: border-box;
 }
 
@@ -56,7 +56,13 @@ body {
   padding: 10px 12px;
 }
 
-.info-body,
+.info-body {
+  flex: 1;
+  overflow: auto;
+  padding: 10px 12px;
+  background: #29282a;
+}
+
 .calendar-body {
   flex: 1;
   overflow: auto;
@@ -85,7 +91,7 @@ body {
 
 .data-actions {
   padding: 10px 12px;
-  background: #2a2a2a;
+  background: #29282a;
 }
 
 .data-action-button {
@@ -97,9 +103,11 @@ body {
   cursor: pointer;
   transition: 0.2s;
 }
+
 .data-action-button:hover {
   font-size: 19px;
 }
+
 .data-action-button:active {
   font-weight: bold;
 }
@@ -112,7 +120,7 @@ body {
 }
 
 .notes-box {
-  background: #2a2a2a;
+  background: #29282a;
   padding: 10px;
 }
 
@@ -137,7 +145,7 @@ body {
 
 .days-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 10px;
   margin-bottom: 10px;
 }
@@ -146,7 +154,7 @@ body {
 /* Day Card */
 /* ===================== */
 .day-card {
-  background: #242326;
+  background: #29282a;
   color: white;
   display: flex;
   flex-direction: column;
@@ -159,6 +167,7 @@ body {
 .day-card__line {
   height: 1px;
   width: 100%;
+  padding: 0;
   background: rgba(255, 255, 255, 0.25);
 }
 
@@ -169,7 +178,7 @@ body {
 }
 
 .day-card__line--bottom {
-  position: absolute;
+  position: relative;
   bottom: 0;
   left: 0;
 }
@@ -210,10 +219,10 @@ body {
 
 .lesson-btn {
   width: 100%;
-  border: 0;
+  border: 1px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
   background: transparent;
   color: white;
-  border-radius: 6px;
   padding: 6px 8px;
   cursor: pointer;
   display: flex;
@@ -221,41 +230,35 @@ body {
   font-size: 12px;
   text-align: left;
   transition: 0.2s;
+  word-wrap: normal;
 }
+
 .lesson-btn:hover {
   background: rgba(255, 255, 255, 0.1);
 }
+
 .lesson-btn:active {
   background: rgba(255, 255, 255, 0.15);
 }
 
 .lesson-btn__time {
   opacity: 0.8;
+  font-size: 10px;
 }
 
 .day-card__add-btn {
   width: 100%;
   height: 26px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 0;
   background: transparent;
   color: white;
   border-radius: 6px;
   cursor: pointer;
   transition: 0.2s;
 }
+
 .day-card__add-btn:hover {
   background: rgba(255, 255, 255, 0.1);
-}
-
-/* ===================== */
-/* Bottom section */
-/* ===================== */
-.day-card__shift {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  margin-top: 6px;
 }
 
 /* ===================== */
@@ -289,5 +292,7 @@ body {
   font-size: 20px;
   font-weight: 300;
 }
+
+
 
 /*# sourceMappingURL=main.css.map */
