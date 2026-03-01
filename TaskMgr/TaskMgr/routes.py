@@ -10,6 +10,6 @@ def home():
     return dict()
 
 @route('/main')
-@view('main/main')
+@view('./main')
 def main():
     return dict()
