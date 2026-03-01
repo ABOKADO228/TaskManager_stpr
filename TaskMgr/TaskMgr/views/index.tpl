@@ -4,8 +4,7 @@
 <!doctype html>
 <html lang="ru">
 <head>
-    <link rel="stylesheet" href="css/tokens.css">
-    <link rel="stylesheet" type="text/css" href="/static/content/AuthReg/Auth.css" />
+    <link rel="stylesheet" type="text/css" href="/static/content/css/auth-reg/auth-reg.css" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Start</title>
@@ -42,7 +41,7 @@
       </section>
 
       <section class="screen" id="screen-register">
-        <div class="header" style="background: rgba(43,134,255,.10); border-color: rgba(255,255,255,.12);">
+        <div class="header" >
           Регистрация
         </div>
 
