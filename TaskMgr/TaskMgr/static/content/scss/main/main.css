@@ -20,7 +20,6 @@ body {
   background: #1c1c1c;
   box-sizing: border-box;
 }
-
 .window-menu {
   height: 40px;
   background: #2a2a2a;
@@ -41,12 +40,10 @@ body {
   cursor: pointer;
   border-radius: 6px;
 }
-
 .wm-btn:hover {
   background: #FFFFFF;
   color: #000000;
 }
-
 .wm-btn.close:hover {
   background: #c71d4c;
   color: #FFFFFF;
@@ -66,7 +63,6 @@ body {
   background: #2a2a2a;
   box-sizing: border-box;
 }
-
 .panel-header {
   background: #324990;
   color: #FFFFFF;
@@ -111,12 +107,10 @@ body {
   cursor: pointer;
   margin-bottom: 8px;
 }
-
 .menu-btn:hover {
   background: #FFFFFF;
   color: #000000;
 }
-
 .menu-btn:active {
   background: #FFFFFF;
   color: #000000;
@@ -136,7 +130,6 @@ body {
   background: #2a2a2a;
   padding: 10px;
 }
-
 .notes-box textarea {
   width: 100%;
   height: 100%;
@@ -188,13 +181,11 @@ body {
   width: 100%;
   background: rgba(255, 255, 255, 0.25);
 }
-
 .day-card__line--top {
   position: absolute;
   top: 0;
   left: 0;
 }
-
 .day-card__line--bottom {
   position: absolute;
   bottom: 0;
@@ -250,11 +241,9 @@ body {
   font-size: 12px;
   text-align: left;
 }
-
 .lesson-btn:hover {
   background: rgba(255, 255, 255, 0.1);
 }
-
 .lesson-btn:active {
   background: rgba(255, 255, 255, 0.14);
 }
@@ -280,11 +269,9 @@ body {
   cursor: pointer;
   font-size: 16px;
 }
-
 .day-card__add-btn:hover {
   background: rgba(255, 255, 255, 0.1);
 }
-
 .day-card__add-btn:active {
   background: rgba(255, 255, 255, 0.14);
 }
@@ -321,7 +308,6 @@ body {
   color: #FFFFFF;
   cursor: pointer;
 }
-
 .nav-btn:hover {
   color: #FFFFFF;
 }
@@ -345,7 +331,5 @@ body {
   font-weight: 300;
   line-height: 1.2;
 }
-
-
 
 /*# sourceMappingURL=main.css.map */
