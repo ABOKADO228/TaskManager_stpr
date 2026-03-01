@@ -46,3 +46,4 @@ wheels/
 */node_modules
 TaskMgr/TaskMgr/node_modules
 TaskMgr/TaskMgr/verify
+TaskMgr/package-lock.json

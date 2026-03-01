@@ -1,0 +1,6 @@
+@use "./token" as token;
+
+@mixin button {
+	background-color: token.$highlight-bg;
+}
+

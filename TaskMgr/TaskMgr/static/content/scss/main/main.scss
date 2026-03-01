@@ -1,9 +1,4 @@
-// ===== Variables =====
-$backgroundcl: #1a1a1a; // аналог BG_Default
-$borderColor: #2a2a2a; // аналог BorderColor
-$panelBg: #101010; // аналог DefaultBackS
-$panelHeaderBg: #202020; // аналог BG_SControl
-
+@use "./../value/token" as token;
 // ===== Base =====
 html,
 body {
@@ -23,7 +18,7 @@ body {
     height: 800px;
     border: 1px solid #1f1f1f;
     overflow: hidden;
-    background: $backgroundcl;
+    background: token.$main-bg;
     box-sizing: border-box;
     // Верхнее меню окна: .window-menu 
     &-menu
