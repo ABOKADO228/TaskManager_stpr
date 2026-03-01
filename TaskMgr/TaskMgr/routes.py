@@ -6,5 +6,10 @@ from bottle import route, view
 @route('/')
 @view('index')
 def home():
-    """Renders the home page."""
+    """render the auth_reg page"""
+    return dict()
+
+@route('/main')
+@view('main/main')
+def main():
     return dict()
