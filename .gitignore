@@ -43,3 +43,4 @@ wheels/
 .env
 .idea/
 .vscode/
+TaskMgr
