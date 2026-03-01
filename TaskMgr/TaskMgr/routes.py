@@ -8,5 +8,3 @@ from bottle import route, view
 def home():
     """Renders the home page."""
     return dict()
-
-
