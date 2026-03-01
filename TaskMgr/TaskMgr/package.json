@@ -6,6 +6,6 @@
     "scss": "sass --watch ./static/content/scss:./static/content/css --style=expanded --source-map"
   },
   "dependencies": {
-    "scss": "^0.2.4"
+    "save-dev": "^0.0.1-security"
   }
 }

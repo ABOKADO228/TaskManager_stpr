@@ -59,4 +59,29 @@
 
 <script src="/static/scripts/week-calendar.js"></script>
 </body>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        if (localStorage.getItem("isAuth") !== "true") {
+            window.location.replace("/");
+            return;
+        };
+
+        document.getElementById("logout-button").addEventListener('click', () => {
+            localStorage.removeItem("isAuth");
+            localStorage.removeItem("username");
+            localStorage.removeItem("userRole");
+            localStorage.removeItem("rememberMe");
+            sessionStorage.removeItem("tempAuth");
+            window.location.replace("/");
+        });
+
+        window.addEventListener("storage", (event) => {
+            if (event.key === "isAuth" && event.newValue !== "true") {
+              window.location.replace("/");
+              }
+            });
+    });
+  </script>
+  <button id="logout-button">logout</button>
 </html>
