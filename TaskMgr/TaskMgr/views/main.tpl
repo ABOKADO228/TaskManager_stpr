@@ -16,6 +16,7 @@
 
       <div class="data-actions">
         <button class="data-action-button">Настройки</button>
+        <button class="data-action-button" id="logout-button">Выйти</button>
       </div>
 
       <div class="notes-title">Заметки</div>
@@ -58,6 +59,7 @@
 </div>
 
 <script src="/static/scripts/week-calendar.js"></script>
+
 </body>
 
   <script>
@@ -83,5 +85,4 @@
             });
     });
   </script>
-  <button id="logout-button">logout</button>
 </html>
