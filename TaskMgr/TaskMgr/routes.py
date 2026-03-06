@@ -13,3 +13,7 @@ def home():
 @view('./main')
 def main():
     return dict()
+@route('/reg-auth')
+@view('./reg-auth')
+def reg_auth():
+    return dict()
