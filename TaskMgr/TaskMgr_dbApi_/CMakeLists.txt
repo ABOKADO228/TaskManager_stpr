@@ -10,7 +10,7 @@ find_package(libpqxx CONFIG REQUIRED)
 
 add_executable(${PROJECT_NAME}
    TaskMgr_dbApi_/TaskMgr_dbApi_.cpp    
-    "TaskMgr_dbApi_/Domain/Models/UserModel.h" "TaskMgr_dbApi_/DTO/AuthDTOs.h" "TaskMgr_dbApi_/Domain/Interfaces/IUserRepository.h" "TaskMgr_dbApi_/Infrastructure/PostgresUserRepository.h" "TaskMgr_dbApi_/Infrastructure/DbConfig.h" "TaskMgr_dbApi_/Infrastructure/PostgresUserRepository.cpp")
+  )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     Drogon::Drogon
