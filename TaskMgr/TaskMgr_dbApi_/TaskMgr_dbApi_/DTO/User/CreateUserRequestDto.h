@@ -1,9 +1,7 @@
 #pragma once
-#include <string>
 #include <optional>
-#include <drogon/drogon.h>
+#include <string>
 #include <json/json.h>
-
 struct CreateUserRequestDto
 {
 	std::string login;
@@ -23,5 +21,12 @@ struct CreateUserRequestDto
 
 		if (!json.isMember("password") || !json["password"].isString())
 			return std::nullopt;
+
+		CreateUserRequestDto dto;
+		dto.email = json["email"].asString();
+		dto.login = json["login"].asString();
+		dto.password = json["password"].asString();
+
+		return dto;
 	}
 };
