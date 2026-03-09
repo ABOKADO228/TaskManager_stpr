@@ -1,6 +1,6 @@
 #pragma once
 #include <drogon/HttpController.h>
-#include "../services/ISessionsService.h"
+#include "../Services/Session/ISessionService.h"
 #include <memory>
 
 class SessionsController : public drogon::HttpController<SessionsController>

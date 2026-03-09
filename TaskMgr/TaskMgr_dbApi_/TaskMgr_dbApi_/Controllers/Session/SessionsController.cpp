@@ -1,6 +1,6 @@
 #include "SessionsController.h"
 
-SessionsController::SessionsController(std::shared_ptr<IUserService> USerService)
+SessionsController::SessionsController(std::shared_ptr<ISessionService> USerService)
 {
 	 
 }

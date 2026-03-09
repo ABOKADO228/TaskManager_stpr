@@ -3,7 +3,9 @@
 
 struct User
 {
+	int id;
 	std::string username;
 	std::string email;
 	std::string passwordHash;
+	int role;
 };

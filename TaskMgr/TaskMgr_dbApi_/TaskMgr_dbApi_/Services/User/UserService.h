@@ -3,12 +3,7 @@
 #include <memory>
 #include "IUserService.h"
 #include <vector>
-#include "Repos"
-
-
-
-
-
+#include "../Repository/User/IUserRepository.h"
 class UserService final : public IUserService
 {
 public:

@@ -7,14 +7,16 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(Drogon CONFIG REQUIRED)
 find_package(libpqxx CONFIG REQUIRED)
+find_package(jwt-cpp CONFIG REQUIRED)
 
 add_executable(${PROJECT_NAME}
    TaskMgr_dbApi_/TaskMgr_dbApi_.cpp    
-   )
+)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     Drogon::Drogon
     libpqxx::pqxx
+    jwt-cpp::jwt-cpp
 )
 
 if (MSVC)
