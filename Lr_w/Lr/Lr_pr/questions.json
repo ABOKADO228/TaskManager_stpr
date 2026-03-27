@@ -1,0 +1,16 @@
+{
+  "Petrenko@gmail.com": {
+    "name": "Anton",
+    "questions": [
+      "My First Question",
+      "My Second Question"
+    ]
+  },
+  "NePetrenko@gmail.com": {
+    "name": "NeTosha",
+    "questions": [
+      "Not my First Question",
+      "Normal Quest"
+    ]
+  }
+}
