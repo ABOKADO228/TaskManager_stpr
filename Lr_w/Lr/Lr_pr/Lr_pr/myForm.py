@@ -1,9 +1,15 @@
+import pdb
 from datetime import datetime
 from bottle import post, request
 import re
 
+audit :dict[str,str] = {}
+
 @post('/home', method='post')
 def my_form():
+
+
+
     mail = request.forms.get('ADRESS', '').strip()
     name = request.forms.get('USERNAME', '').strip()
     quest = request.forms.get('QUEST', '').strip()
@@ -16,8 +22,12 @@ def my_form():
     
     if not re.match(email_pattern, mail):
         return '<p style="color:red;">Error: invalid email format.</p>'
-    if not re.match(login_pattern, mail):
+    if not re.match(login_pattern, name):
         return '<p style="color:red;">Error: invalid login format.</p>'
+
+    pdb.set_trace()
+
+    audit[name] = quest
 
     return f'''
     <p>Thanks, {name}! Your question has been accepted.</p>
