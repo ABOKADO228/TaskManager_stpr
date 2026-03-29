@@ -1,0 +1,6 @@
+{
+  "TestFramework": "unittest",
+  "UnitTestRootDirectory": ".",
+  "UnitTestPattern": "test_*.py",
+  "Interpreter": "Workspace|Workspace|env"
+}
