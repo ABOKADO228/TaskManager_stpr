@@ -1,9 +1,9 @@
-import pdb
 from datetime import datetime
 from bottle import post, request
-import re
 import json
 import os
+
+from authorization_test_utils import validate_email, validate_login, is_valid_question
 
 JSON_FILE = 'questions.json'
 
@@ -23,32 +23,21 @@ def save_questions(data):
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
-def is_valid_question(quest):
-    if len(quest) <= 3:
-        return False
-    if quest.isdigit():
-        return False
-    return True
-
-
-@post('/home', method='post')
+@post('/home')
 def my_form():
     mail = request.forms.get('ADRESS', '').strip()
     name = request.forms.get('USERNAME', '').strip()
     quest = request.forms.get('QUEST', '').strip()
 
-    email_pattern = r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+\.[A-Za-z]{2,}$'
-    login_pattern = r'^[A-Za-z]{2,50}$'
-
-
     if not name or not quest or not mail:
         return '<p style="color:red;">Error: all form fields must be filled in.</p>'
 
-
-    if not re.match(email_pattern, mail):
+    if not validate_email(mail):
         return '<p style="color:red;">Error: invalid email format.</p>'
-    if not re.match(login_pattern, name):
+
+    if not validate_login(name):
         return '<p style="color:red;">Error: invalid login format.</p>'
+
     if not is_valid_question(quest):
         return '<p style="color:red;">Error: question must be more than 3 characters and cannot consist only of digits.</p>'
 
@@ -66,9 +55,7 @@ def my_form():
     if quest in questions_db[mail]['questions']:
         return f'<p style="color:orange;">Warning: This question already exists for user {name}. Question not added as duplicate.</p>'
 
-
     questions_db[mail]['questions'].append(quest)
-
     save_questions(questions_db)
 
     return f'''
