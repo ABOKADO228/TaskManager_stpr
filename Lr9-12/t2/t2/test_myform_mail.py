@@ -6,22 +6,22 @@ class TestEmailValidation(unittest.TestCase):
 
     def test_invalid_email_assert_false(self):
         list_mail_uncor = [
-            "",                     # пустая строка
-            "1",                    # вообще не email
-            "m1@",                  # нет домена
-            "@mail.ru",             # нет локальной части
-            "mail.ru",              # нет @
-            "m..m@mail.ru",         # две точки подряд в локальной части
-            ".m@mail.ru",           # точка в начале локальной части
-            "m.@mail.ru",           # точка в конце локальной части
-            "m@mail",               # нет доменной зоны
-            "m@mail.",              # домен оканчивается точкой
-            "m@.ru",                # домен начинается с точки
-            "m@mail..ru",           # две точки подряд в домене
-            "m@ma_il.ru",           # недопустимый символ _ в домене
-            "m mail@mail.ru",       # пробел в локальной части
-            "m@mail,ru",            # запятая вместо точки
-            "маша@mail.ru",         # кириллица в локальной части
+            "",
+            "1",
+            "m1@",
+            "@mail.ru",
+            "mail.ru",
+            "m..m@mail.ru",
+            ".m@mail.ru",
+            "m.@mail.ru",
+            "m@mail",
+            "m@mail.",
+            "m@.ru",
+            "m@mail..ru",
+            "m@ma_il.ru",
+            "m mail@mail.ru",
+            "m@mail,ru",
+            "маша@mail.ru",
         ]
 
         for mail in list_mail_uncor:

@@ -3,16 +3,23 @@
   "WorkspaceRootPath": "D:\\Development\\Projects\\TaskManager_stpr\\Lr9-12\\t1\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{AF990A06-A5E6-4412-8AE7-70E029EA0EF3}|t1\\t1.pyproj|D:\\Development\\Projects\\TaskManager_stpr\\Lr9-12\\t1\\t1\\utest_calc.py||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{AF990A06-A5E6-4412-8AE7-70E029EA0EF3}|t1\\t1.pyproj|solutionrelative:t1\\utest_calc.py||{8B382828-6202-11D1-8870-0000F87579D2}"
+      "AbsoluteMoniker": "D:0:0:{00000000-0000-0000-0000-000000000000}|\u003CSolution\u003E|t1||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AF990A06-A5E6-4412-8AE7-70E029EA0EF3}|t1\\t1.pyproj|D:\\Development\\Projects\\TaskManager_stpr\\Lr9-12\\t1\\t1\\test_calc.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{AF990A06-A5E6-4412-8AE7-70E029EA0EF3}|t1\\t1.pyproj|solutionrelative:t1\\test_calc.py||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{AF990A06-A5E6-4412-8AE7-70E029EA0EF3}|t1\\t1.pyproj|D:\\Development\\Projects\\TaskManager_stpr\\Lr9-12\\t1\\t1\\calc.py||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{AF990A06-A5E6-4412-8AE7-70E029EA0EF3}|t1\\t1.pyproj|solutionrelative:t1\\calc.py||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AF990A06-A5E6-4412-8AE7-70E029EA0EF3}|t1\\t1.pyproj|D:\\Development\\Projects\\TaskManager_stpr\\Lr9-12\\t1\\t1\\test_calc.py||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{AF990A06-A5E6-4412-8AE7-70E029EA0EF3}|t1\\t1.pyproj|solutionrelative:t1\\test_calc.py||{8B382828-6202-11D1-8870-0000F87579D2}"
+      "AbsoluteMoniker": "D:0:0:{AF990A06-A5E6-4412-8AE7-70E029EA0EF3}|t1\\t1.pyproj|D:\\Development\\Projects\\TaskManager_stpr\\Lr9-12\\t1\\t1\\utest_calc.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{AF990A06-A5E6-4412-8AE7-70E029EA0EF3}|t1\\t1.pyproj|solutionrelative:t1\\utest_calc.py||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AF990A06-A5E6-4412-8AE7-70E029EA0EF3}|t1\\t1.pyproj|D:\\Development\\Projects\\TaskManager_stpr\\Lr9-12\\t1\\t1\\t1.pyproj||{B270807C-D8C6-49EB-8EBE-8E8D566637A1}|d3b8505a-a2a7-49ed-b2c1-400136801ec6",
+      "RelativeMoniker": "D:0:0:{AF990A06-A5E6-4412-8AE7-70E029EA0EF3}|t1\\t1.pyproj|solutionrelative:t1\\t1.pyproj||{B270807C-D8C6-49EB-8EBE-8E8D566637A1}|d3b8505a-a2a7-49ed-b2c1-400136801ec6"
     }
   ],
   "DocumentGroupContainers": [
@@ -31,6 +38,18 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "t1",
+              "DocumentMoniker": "D:\\Development\\Projects\\TaskManager_stpr\\Lr9-12\\t1\\t1\\t1.pyproj",
+              "RelativeDocumentMoniker": "t1\\t1.pyproj",
+              "ToolTip": "D:\\Development\\Projects\\TaskManager_stpr\\Lr9-12\\t1\\t1\\t1.pyproj",
+              "RelativeToolTip": "t1\\t1.pyproj",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2026-04-22T22:16:14.827Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "utest_calc.py",
               "DocumentMoniker": "D:\\Development\\Projects\\TaskManager_stpr\\Lr9-12\\t1\\t1\\utest_calc.py",
               "RelativeDocumentMoniker": "t1\\utest_calc.py",
@@ -43,7 +62,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "calc.py",
               "DocumentMoniker": "D:\\Development\\Projects\\TaskManager_stpr\\Lr9-12\\t1\\t1\\calc.py",
               "RelativeDocumentMoniker": "t1\\calc.py",
@@ -56,7 +75,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
               "Title": "test_calc.py",
               "DocumentMoniker": "D:\\Development\\Projects\\TaskManager_stpr\\Lr9-12\\t1\\t1\\test_calc.py",
               "RelativeDocumentMoniker": "t1\\test_calc.py",
