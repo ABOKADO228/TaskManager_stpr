@@ -48,6 +48,25 @@
   border: 1px solid rgba(255, 255, 255, 0.07);
 }
 
+.group-switch {
+  display: grid;
+  gap: 6px;
+  color: #dce2f2;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.group-switch select {
+  min-height: 40px;
+  width: 100%;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #191b20;
+  color: #f6f7fb;
+  outline: none;
+}
+
 .side-actions {
   display: grid;
   gap: 8px;

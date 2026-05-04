@@ -122,6 +122,41 @@ document.addEventListener("DOMContentLoaded", () => {
     return getGroups().find((group) => group.id === session.currentGroupId) ?? null;
   }
 
+  // Возвращает группы, в которых состоит текущий пользователь.
+  //
+  // @returns
+  // Массив групп текущего пользователя.
+  //
+  // @throws
+  // Не выбрасывает исключения напрямую.
+  //
+  // @note
+  // Используется для удобного переключения между несколькими учебными группами.
+  function getUserGroups() {
+    const session = getSession();
+    if (!session) return [];
+    return getGroups().filter((group) => group.members?.[session.userId]);
+  }
+
+  // Создает краткий профиль текущего пользователя для хранения в группе.
+  //
+  // @returns
+  // Объект с id, username и displayName текущей сессии.
+  //
+  // @throws
+  // Не выбрасывает исключения напрямую.
+  //
+  // @note
+  // Профили участников нужны для отображения списка группы без серверной БД.
+  function getCurrentMemberProfile() {
+    const session = getSession();
+    return {
+      id: session.userId,
+      username: session.username,
+      displayName: session.displayName || session.username
+    };
+  }
+
   // Обновляет текущую сессию частичными данными.
   //
   // @param data
@@ -295,6 +330,33 @@ document.addEventListener("DOMContentLoaded", () => {
     notes.value = localStorage.getItem(`${NOTES_PREFIX}${session.userId}`) ?? "";
   }
 
+  // Отрисовывает выпадающий список групп пользователя.
+  //
+  // @returns
+  // Не возвращает значение.
+  //
+  // @throws TypeError
+  // Может возникнуть, если select переключения групп отсутствует в шаблоне.
+  //
+  // @note
+  // Список показывает только группы, где текущий пользователь является участником.
+  function renderGroupSwitch() {
+    const select = document.getElementById("group-switch-select");
+    const session = getSession();
+    const groups = getUserGroups();
+
+    select.innerHTML = [
+      '<option value="">Группа не выбрана</option>',
+      ...groups.map((group) => {
+        const role = group.members?.[session.userId] === "leader" ? "староста" : "ученик";
+        return `<option value="${escapeHtml(group.id)}">${escapeHtml(group.name)} - ${role}</option>`;
+      })
+    ].join("");
+
+    select.value = session.currentGroupId || "";
+    select.disabled = groups.length === 0;
+  }
+
   // Отрисовывает состояние выбранной группы, роль пользователя и календарь.
   //
   // @returns
@@ -313,6 +375,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const empty = document.getElementById("empty-state");
     const calendar = document.getElementById("calendar-panel");
     const addButton = document.getElementById("add-event-button");
+    renderGroupSwitch();
 
     if (!group) {
       card.innerHTML = `
@@ -418,6 +481,49 @@ document.addEventListener("DOMContentLoaded", () => {
     return (group.events ?? []).find((event) => event.id === eventId) ?? null;
   }
 
+  // Создает HTML списка участников выбранной группы.
+  //
+  // @param group
+  // Группа, участников которой нужно показать.
+  //
+  // @returns
+  // HTML-строку со списком участников.
+  //
+  // @throws
+  // Не выбрасывает исключения напрямую.
+  //
+  // @note
+  // Для старых групп без memberProfiles показывается запасное имя по id.
+  function renderMembers(group) {
+    const members = Object.entries(group.members ?? {});
+    if (!members.length) return '<p class="muted">Участников пока нет.</p>';
+
+    return `
+      <section class="members-panel">
+        <h3>Участники группы</h3>
+        <div class="member-list">
+          ${members.map(([userId, role]) => {
+            const profile = group.memberProfiles?.[userId] ?? {};
+            const name = profile.displayName || profile.username || userId;
+            const username = profile.username ? `@${profile.username}` : userId;
+            const roleLabel = role === "leader" ? "Староста" : "Ученик";
+
+            return `
+              <div class="member-card">
+                <div class="member-avatar">${escapeHtml(name).slice(0, 1).toUpperCase()}</div>
+                <div class="member-info">
+                  <strong>${escapeHtml(name)}</strong>
+                  <span>${escapeHtml(username)}</span>
+                </div>
+                <span class="member-role">${roleLabel}</span>
+              </div>
+            `;
+          }).join("")}
+        </div>
+      </section>
+    `;
+  }
+
   // Отрисовывает правую панель деталей события и комментариев.
   //
   // @param eventId
@@ -446,6 +552,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <strong>Права роли</strong>
           <span>${isLeader ? "Староста может создавать и редактировать расписание, домашние задания и события." : "Ученик может смотреть расписание и оставлять комментарии."}</span>
         </div>
+        ${renderMembers(group)}
       `;
       return;
     }
@@ -457,7 +564,12 @@ document.addEventListener("DOMContentLoaded", () => {
         <h2>${escapeHtml(event.title)}</h2>
         <p>${dayNames[event.day]} ${event.time ? `• ${escapeHtml(event.time)}` : ""}</p>
         <div class="description">${escapeHtml(event.description || "Описание не добавлено.")}</div>
-        ${isLeader ? '<button class="action-btn" type="button" id="edit-event-button">Редактировать</button>' : ""}
+        ${isLeader ? `
+          <div class="detail-actions">
+            <button class="action-btn" type="button" id="edit-event-button">Редактировать</button>
+            <button class="action-btn action-btn--danger" type="button" id="delete-event-button">Удалить</button>
+          </div>
+        ` : ""}
       </article>
 
       <section class="comments">
@@ -475,6 +587,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <button class="primary-btn" type="submit">Отправить</button>
         </form>
       </section>
+      ${renderMembers(group)}
     `;
   }
 
@@ -508,6 +621,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
     saveGroups(groups);
     selectedEventId = eventData.id;
+    renderGroup();
+  }
+
+  // Удаляет выбранное событие из текущей группы.
+  //
+  // @param eventId
+  // Идентификатор события, которое нужно удалить.
+  //
+  // @returns
+  // Не возвращает значение.
+  //
+  // @throws
+  // Может выбросить ошибку записи в localStorage.
+  //
+  // @note
+  // Удаление доступно только старосте выбранной группы.
+  function deleteGroupEvent(eventId) {
+    const session = getSession();
+    const groups = getGroups();
+    const group = groups.find((item) => item.id === session.currentGroupId);
+    if (!group || !canManage(group)) return;
+
+    group.events = (group.events ?? []).filter((event) => event.id !== eventId);
+    saveGroups(groups);
+    selectedEventId = null;
     renderGroup();
   }
 
@@ -545,6 +683,12 @@ document.addEventListener("DOMContentLoaded", () => {
     window.location.replace("/");
   });
 
+  document.getElementById("group-switch-select").addEventListener("change", (event) => {
+    selectedEventId = null;
+    updateSession({ currentGroupId: event.target.value || null });
+    renderGroup();
+  });
+
   document.getElementById("notes-input").addEventListener("input", (event) => {
     localStorage.setItem(`${NOTES_PREFIX}${getSession().userId}`, event.target.value);
   });
@@ -571,6 +715,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const eventToEdit = findSelectedEvent(group, selectedEventId);
       if (eventToEdit && canManage(group)) openEventForm(eventToEdit);
     }
+
+    if (event.target.id === "delete-event-button") {
+      const group = getCurrentGroup();
+      if (selectedEventId && canManage(group)) deleteGroupEvent(selectedEventId);
+    }
   });
 
   document.getElementById("group-form").addEventListener("submit", (event) => {
@@ -586,6 +735,7 @@ document.addEventListener("DOMContentLoaded", () => {
       code: generateCode(),
       createdBy: session.userId,
       members: { [session.userId]: "leader" },
+      memberProfiles: { [session.userId]: getCurrentMemberProfile() },
       events: [
         {
           id: `event-${Date.now()}`,
@@ -620,8 +770,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     group.members ??= {};
+    group.memberProfiles ??= {};
     group.members[session.userId] ??= "member";
+    group.memberProfiles[session.userId] = getCurrentMemberProfile();
     saveGroups(groups);
+    selectedEventId = null;
     updateSession({ currentGroupId: group.id });
     document.getElementById("join-code").value = "";
     document.getElementById("join-message").textContent = "";

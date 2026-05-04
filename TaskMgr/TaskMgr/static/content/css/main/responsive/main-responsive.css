@@ -33,4 +33,9 @@
   .form-grid {
     grid-template-columns: 1fr;
   }
+
+  .detail-actions,
+  .member-card {
+    grid-template-columns: 1fr;
+  }
 }
