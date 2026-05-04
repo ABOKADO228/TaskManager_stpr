@@ -2,6 +2,13 @@
 
 from bottle import redirect, request, route, view
 
+from active_user_service import (
+    build_active_user,
+    empty_user_form,
+    load_active_users,
+    save_active_users,
+    validate_active_user,
+)
 from order_service import build_order, empty_form, load_orders, save_orders, validate_order
 
 @route('/')
@@ -65,3 +72,49 @@ def add_order():
     # Redirect after successful POST prevents duplicate submissions and clears
     # the form fields on page reload.
     redirect('/orders')
+
+
+@route('/active-users', method='GET')
+@view('active-users')
+def active_users_page():
+    """Render the active users page with data loaded from the JSON file."""
+
+    return {
+        "users": load_active_users(),
+        "errors": {},
+        "form": empty_user_form(),
+    }
+
+
+@route('/active-users', method='POST')
+@view('active-users')
+def add_active_user():
+    """Validate and save a new active user or return errors to the same page."""
+
+    # We copy only expected fields from the submitted form. This keeps the JSON
+    # structure predictable and prevents accidental extra keys from being saved.
+    form = {
+        "nick": (request.forms.getunicode("nick") or "").strip(),
+        "description": (request.forms.getunicode("description") or "").strip(),
+        "active_date": (request.forms.getunicode("active_date") or "").strip(),
+        "phone": (request.forms.getunicode("phone") or "").strip(),
+    }
+
+    users = load_active_users()
+    errors = validate_active_user(form, users)
+
+    if errors:
+        # Return the same form values so the user can correct only invalid
+        # fields instead of retyping the whole form.
+        return {
+            "users": users,
+            "errors": errors,
+            "form": form,
+        }
+
+    users.append(build_active_user(form))
+    save_active_users(users)
+
+    # Redirect clears fields after successful submit and avoids duplicate POSTs
+    # when the browser refreshes the page.
+    redirect('/active-users')
