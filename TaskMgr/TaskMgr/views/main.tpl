@@ -20,6 +20,12 @@
 
       <section class="side-section">
         <div class="side-section__title">Моя группа</div>
+        <label class="group-switch">
+          <span>Переключить группу</span>
+          <select id="group-switch-select">
+            <option value="">Группа не выбрана</option>
+          </select>
+        </label>
         <div class="group-card" id="current-group-card">
           <strong>Группа не выбрана</strong>
           <span>Создайте группу или присоединитесь по коду.</span>

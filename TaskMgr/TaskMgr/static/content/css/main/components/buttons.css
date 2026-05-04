@@ -18,6 +18,11 @@
   background: #303541;
 }
 
+.action-btn--danger {
+  background: #52242d;
+  color: #ffd3dc;
+}
+
 .logout-btn {
   margin-top: auto;
   background: #3a2028;
