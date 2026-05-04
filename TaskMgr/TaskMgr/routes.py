@@ -1,4 +1,4 @@
-"""Routes and views for the Bottle application."""
+# Маршруты и представления Bottle-приложения.
 
 from bottle import redirect, request, route, view
 
@@ -11,27 +11,46 @@ from active_user_service import (
 )
 from order_service import build_order, empty_form, load_orders, save_orders, validate_order
 
+
+# Отображает стартовую страницу сайта.
+# @returns словарь контекста для шаблона views/index.tpl.
+# @throws не выбрасывает исключения напрямую.
+# @note страница содержит навигацию к входу, заказам и активным пользователям.
 @route('/')
 @view('index')
 def home():
-    """render the auth_reg page"""
     return dict()
 
+
+# Отображает главное рабочее пространство пользователя.
+# @returns словарь контекста для шаблона views/main.tpl.
+# @throws не выбрасывает исключения напрямую.
+# @note доступ дополнительно проверяется клиентским JavaScript через localStorage.
+# FIXME проверку авторизации нужно перенести на серверную сторону.
 @route('/main')
 @view('./main')
 def main():
     return dict()
+
+
+# Отображает страницу входа и регистрации.
+# @returns словарь контекста для шаблона views/reg-auth.tpl.
+# @throws не выбрасывает исключения напрямую.
+# @note в текущем прототипе регистрация и вход реализованы на клиенте.
+# FIXME пароли и сессии нужно перенести на backend перед реальным использованием.
 @route('/reg-auth')
 @view('./reg-auth')
 def reg_auth():
     return dict()
 
 
+# Отображает страницу оформленных заказов с чистой формой добавления.
+# @returns контекст шаблона views/orders.tpl: список заказов, ошибки и состояние формы.
+# @throws не выбрасывает исключения напрямую; чтение JSON защищено в load_orders.
+# @note заказы загружаются из файла Python-кодом и сортируются по дате.
 @route('/orders', method='GET')
 @view('orders')
 def orders_page():
-    """Render the оформленные заказы page with a clean form."""
-
     return {
         "orders": load_orders(),
         "errors": {},
@@ -39,13 +58,14 @@ def orders_page():
     }
 
 
+# Обрабатывает отправку формы нового оформленного заказа.
+# @returns контекст страницы с ошибками либо redirect на /orders при успехе.
+# @throws OSError если save_orders не сможет записать JSON-файл.
+# @note redirect после успешного POST очищает форму и защищает от повторной отправки.
 @route('/orders', method='POST')
 @view('orders')
 def add_order():
-    """Validate form input, save a new order, or show errors on the same page."""
-
-    # Bottle keeps submitted values in request.forms. We copy only known fields
-    # so unexpected input cannot be written to the JSON file.
+    # Копируем только ожидаемые поля, чтобы лишние данные не попали в JSON.
     form = {
         "number": (request.forms.getunicode("number") or "").strip(),
         "author": (request.forms.getunicode("author") or "").strip(),
@@ -58,8 +78,6 @@ def add_order():
     errors = validate_order(form, orders)
 
     if errors:
-        # The same template receives the previous form values, so the user does
-        # not need to type everything again after a validation error.
         return {
             "orders": orders,
             "errors": errors,
@@ -68,17 +86,16 @@ def add_order():
 
     orders.append(build_order(form))
     save_orders(orders)
-
-    # Redirect after successful POST prevents duplicate submissions and clears
-    # the form fields on page reload.
     redirect('/orders')
 
 
+# Отображает страницу активных пользователей.
+# @returns контекст шаблона views/active-users.tpl: список пользователей, ошибки и форма.
+# @throws не выбрасывает исключения напрямую; чтение JSON защищено в load_active_users.
+# @note это страница варианта 6 по заданию.
 @route('/active-users', method='GET')
 @view('active-users')
 def active_users_page():
-    """Render the active users page with data loaded from the JSON file."""
-
     return {
         "users": load_active_users(),
         "errors": {},
@@ -86,13 +103,14 @@ def active_users_page():
     }
 
 
+# Обрабатывает отправку формы нового активного пользователя.
+# @returns контекст страницы с ошибками либо redirect на /active-users при успехе.
+# @throws OSError если save_active_users не сможет записать JSON-файл.
+# @note серверная валидация работает даже при отключенной HTML5-валидации браузера.
 @route('/active-users', method='POST')
 @view('active-users')
 def add_active_user():
-    """Validate and save a new active user or return errors to the same page."""
-
-    # We copy only expected fields from the submitted form. This keeps the JSON
-    # structure predictable and prevents accidental extra keys from being saved.
+    # Копируем только ожидаемые поля, чтобы структура JSON оставалась предсказуемой.
     form = {
         "nick": (request.forms.getunicode("nick") or "").strip(),
         "description": (request.forms.getunicode("description") or "").strip(),
@@ -104,8 +122,6 @@ def add_active_user():
     errors = validate_active_user(form, users)
 
     if errors:
-        # Return the same form values so the user can correct only invalid
-        # fields instead of retyping the whole form.
         return {
             "users": users,
             "errors": errors,
@@ -114,7 +130,4 @@ def add_active_user():
 
     users.append(build_active_user(form))
     save_active_users(users)
-
-    # Redirect clears fields after successful submit and avoids duplicate POSTs
-    # when the browser refreshes the page.
     redirect('/active-users')

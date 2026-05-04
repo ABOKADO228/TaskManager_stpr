@@ -14,6 +14,11 @@ import routes
 if "--debug" in sys.argv[1:] or "SERVER_DEBUG" in os.environ:
     bottle.debug(True)
 
+# Отдает статические файлы проекта: CSS, JavaScript, шрифты и изображения.
+# @param filepath относительный путь к файлу внутри папки static.
+# @returns HTTP-ответ Bottle с содержимым найденного статического файла.
+# @throws HTTPError Bottle вернет 404, если файл не найден в STATIC_ROOT.
+# @note все CSS-точки входа и импортируемые CSS-файлы загружаются через этот маршрут.
 @bottle.route("/static/<filepath:path>")
 def server_static(filepath):
     return bottle.static_file(filepath, root=STATIC_ROOT)

@@ -1,3 +1,18 @@
+﻿// Инициализирует клиентское рабочее пространство после загрузки DOM.
+//
+// @returns
+// Не возвращает значение.
+//
+// @throws
+// Может выбросить ошибку, если в шаблоне отсутствуют обязательные элементы
+// главного экрана.
+//
+// @note
+// Вся логика главного экрана пока хранит данные в localStorage.
+//
+// FIXME
+// При переносе на backend большую часть функций чтения/записи нужно заменить
+// HTTP-запросами к API.
 document.addEventListener("DOMContentLoaded", () => {
   const SESSION_KEY = "taskmgr_session";
   const GROUPS_KEY = "taskmgr_groups";
@@ -14,6 +29,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let selectedEventId = null;
 
+  // Безопасно читает JSON-значение из localStorage.
+  //
+  // @param key
+  // Ключ localStorage, из которого нужно прочитать JSON.
+  //
+  // @param fallback
+  // Значение по умолчанию, если ключ отсутствует или JSON поврежден.
+  //
+  // @returns
+  // Распарсенное значение или `fallback`.
+  //
+  // @throws
+  // Не выбрасывает исключения: ошибка JSON.parse перехватывается.
+  //
+  // @note
+  // Эта функция защищает интерфейс от падения при ручной порче localStorage.
   function readJson(key, fallback) {
     try {
       return JSON.parse(localStorage.getItem(key)) ?? fallback;
@@ -22,57 +53,179 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Записывает JavaScript-значение в localStorage как JSON.
+  //
+  // @param key
+  // Ключ localStorage для записи.
+  //
+  // @param value
+  // Значение, которое будет сериализовано через JSON.stringify.
+  //
+  // @returns
+  // Не возвращает значение.
+  //
+  // @throws
+  // Может выбросить ошибку, если localStorage недоступен или переполнен.
+  //
+  // @note
+  // Используется для сессий, групп и пользовательских данных прототипа.
   function writeJson(key, value) {
     localStorage.setItem(key, JSON.stringify(value));
   }
 
+  // Получает текущую пользовательскую сессию.
+  //
+  // @returns
+  // Объект сессии или `null`, если пользователь не авторизован.
+  //
+  // @throws
+  // Не выбрасывает исключения напрямую.
   function getSession() {
     return readJson(SESSION_KEY, null);
   }
 
+  // Загружает список учебных групп из localStorage.
+  //
+  // @returns
+  // Массив групп. Если данных нет, возвращает пустой массив.
+  //
+  // @throws
+  // Не выбрасывает исключения напрямую.
   function getGroups() {
     return readJson(GROUPS_KEY, []);
   }
 
+  // Сохраняет список групп в localStorage.
+  //
+  // @param groups
+  // Массив групп для сохранения.
+  //
+  // @returns
+  // Не возвращает значение.
+  //
+  // @throws
+  // Может выбросить ошибку localStorage при невозможности записи.
   function saveGroups(groups) {
     writeJson(GROUPS_KEY, groups);
   }
 
+  // Находит группу, выбранную в текущей сессии.
+  //
+  // @returns
+  // Объект текущей группы или `null`, если группа не выбрана.
+  //
+  // @throws
+  // Не выбрасывает исключения напрямую.
   function getCurrentGroup() {
     const session = getSession();
     if (!session?.currentGroupId) return null;
     return getGroups().find((group) => group.id === session.currentGroupId) ?? null;
   }
 
+  // Обновляет текущую сессию частичными данными.
+  //
+  // @param data
+  // Объект с полями, которые нужно добавить или заменить в сессии.
+  //
+  // @returns
+  // Не возвращает значение.
+  //
+  // @throws
+  // Может выбросить ошибку записи в localStorage.
+  //
+  // @note
+  // Используется, например, для сохранения выбранной группы.
   function updateSession(data) {
     const session = getSession();
     writeJson(SESSION_KEY, { ...session, ...data });
   }
 
+  // Возвращает роль текущего пользователя в указанной группе.
+  //
+  // @param group
+  // Группа, в которой нужно проверить роль пользователя.
+  //
+  // @returns
+  // Строку `leader`, `member` или `none`.
+  //
+  // @throws
+  // Не выбрасывает исключения напрямую.
   function getRole(group) {
     const session = getSession();
     if (!session || !group) return "none";
     return group.members?.[session.userId] ?? "none";
   }
 
+  // Проверяет, может ли текущий пользователь управлять группой.
+  //
+  // @param group
+  // Группа для проверки прав.
+  //
+  // @returns
+  // `true`, если пользователь староста. Иначе `false`.
+  //
+  // @throws
+  // Не выбрасывает исключения.
   function canManage(group) {
     return getRole(group) === "leader";
   }
 
+  // Генерирует короткий код приглашения в группу.
+  //
+  // @returns
+  // Код из 6 символов в верхнем регистре.
+  //
+  // @throws
+  // Не выбрасывает исключения.
+  //
+  // FIXME
+  // Сейчас уникальность кода не проверяется. При росте числа групп нужно
+  // проверять коллизии перед сохранением.
   function generateCode() {
     return Math.random().toString(36).slice(2, 8).toUpperCase();
   }
 
+  // Открывает модальное окно по id.
+  //
+  // @param id
+  // id DOM-элемента модального окна.
+  //
+  // @returns
+  // Не возвращает значение.
+  //
+  // @throws TypeError
+  // Может возникнуть, если элемент с таким id не найден.
   function openModal(id) {
     document.getElementById(id).hidden = false;
   }
 
+  // Закрывает все модальные окна на странице.
+  //
+  // @returns
+  // Не возвращает значение.
+  //
+  // @throws
+  // Не выбрасывает исключения напрямую.
   function closeModals() {
     document.querySelectorAll(".modal").forEach((modal) => {
       modal.hidden = true;
     });
   }
 
+  // Экранирует пользовательский текст перед вставкой в innerHTML.
+  //
+  // @param value
+  // Любое значение, которое нужно безопасно вывести как текст.
+  //
+  // @returns
+  // Строку с замененными HTML-спецсимволами.
+  //
+  // @throws
+  // Не выбрасывает исключения.
+  //
+  // @note
+  // Важно использовать для данных из localStorage, потому что их можно
+  // изменить вручную через DevTools.
   function escapeHtml(value) {
     return String(value ?? "")
       .replaceAll("&", "&amp;")
@@ -82,6 +235,13 @@ document.addEventListener("DOMContentLoaded", () => {
       .replaceAll("'", "&#039;");
   }
 
+  // Очищает клиентские данные авторизации.
+  //
+  // @returns
+  // Не возвращает значение.
+  //
+  // @throws
+  // Может выбросить ошибку, если storage недоступен.
   function clearAuth() {
     localStorage.removeItem("taskmgr_session");
     localStorage.removeItem("isAuth");
@@ -91,6 +251,16 @@ document.addEventListener("DOMContentLoaded", () => {
     sessionStorage.removeItem("tempAuth");
   }
 
+  // Проверяет наличие активной сессии и перенаправляет гостя на главную.
+  //
+  // @returns
+  // Объект сессии или `null`, если пользователь не авторизован.
+  //
+  // @throws
+  // Не выбрасывает исключения напрямую.
+  //
+  // FIXME
+  // Это клиентская защита. Для реального проекта нужна серверная проверка.
   function requireAuth() {
     const session = getSession();
     const isAuth = localStorage.getItem("isAuth") === "true";
@@ -108,6 +278,13 @@ document.addEventListener("DOMContentLoaded", () => {
     return session;
   }
 
+  // Отрисовывает профиль пользователя и подставляет его личные заметки.
+  //
+  // @returns
+  // Не возвращает значение.
+  //
+  // @throws TypeError
+  // Может возникнуть, если обязательные DOM-элементы профиля отсутствуют.
   function renderProfile() {
     const session = getSession();
     document.getElementById("profile-name").textContent = session.displayName || session.username;
@@ -118,6 +295,16 @@ document.addEventListener("DOMContentLoaded", () => {
     notes.value = localStorage.getItem(`${NOTES_PREFIX}${session.userId}`) ?? "";
   }
 
+  // Отрисовывает состояние выбранной группы, роль пользователя и календарь.
+  //
+  // @returns
+  // Не возвращает значение.
+  //
+  // @throws TypeError
+  // Может возникнуть при отсутствии обязательных DOM-элементов главного экрана.
+  //
+  // @note
+  // Кнопка добавления события скрывается для обычного участника.
   function renderGroup() {
     const group = getCurrentGroup();
     const card = document.getElementById("current-group-card");
@@ -160,6 +347,16 @@ document.addEventListener("DOMContentLoaded", () => {
     renderDetails(selectedEventId);
   }
 
+  // Отрисовывает недельный календарь для выбранной группы.
+  //
+  // @param group
+  // Группа, события которой нужно показать.
+  //
+  // @returns
+  // Не возвращает значение.
+  //
+  // @throws TypeError
+  // Может возникнуть, если контейнер календаря отсутствует.
   function renderWeek(group) {
     const grid = document.getElementById("week-grid");
     const events = group.events ?? [];
@@ -183,6 +380,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }).join("");
   }
 
+  // Создает HTML-кнопку одного события календаря.
+  //
+  // @param event
+  // Событие группы с полями `id`, `type`, `title`, `time`.
+  //
+  // @returns
+  // HTML-строку карточки события.
+  //
+  // @throws
+  // Не выбрасывает исключения напрямую.
   function renderEventButton(event) {
     return `
       <button class="event-card ${selectedEventId === event.id ? "event-card--active" : ""}" type="button" data-event-id="${event.id}">
@@ -193,11 +400,34 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
   }
 
+  // Ищет выбранное событие в группе.
+  //
+  // @param group
+  // Группа, в которой выполняется поиск.
+  //
+  // @param eventId
+  // Идентификатор события.
+  //
+  // @returns
+  // Объект события или `null`.
+  //
+  // @throws
+  // Не выбрасывает исключения.
   function findSelectedEvent(group, eventId) {
     if (!group || !eventId) return null;
     return (group.events ?? []).find((event) => event.id === eventId) ?? null;
   }
 
+  // Отрисовывает правую панель деталей события и комментариев.
+  //
+  // @param eventId
+  // id события, которое нужно показать.
+  //
+  // @returns
+  // Не возвращает значение.
+  //
+  // @throws TypeError
+  // Может возникнуть, если контейнер деталей отсутствует.
   function renderDetails(eventId) {
     const body = document.getElementById("details-body");
     const group = getCurrentGroup();
@@ -248,6 +478,19 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
   }
 
+  // Добавляет новое событие группы или обновляет существующее.
+  //
+  // @param eventData
+  // Данные события из формы.
+  //
+  // @returns
+  // Не возвращает значение.
+  //
+  // @throws
+  // Может выбросить ошибку записи в localStorage.
+  //
+  // @note
+  // Функция ничего не делает, если текущий пользователь не староста.
   function saveGroupEvent(eventData) {
     const session = getSession();
     const groups = getGroups();
@@ -268,6 +511,17 @@ document.addEventListener("DOMContentLoaded", () => {
     renderGroup();
   }
 
+  // Открывает форму создания или редактирования события.
+  //
+  // @param event
+  // Существующее событие для редактирования. Если `null`, открывается форма
+  // создания нового события.
+  //
+  // @returns
+  // Не возвращает значение.
+  //
+  // @throws TypeError
+  // Может возникнуть, если элементы формы события отсутствуют.
   function openEventForm(event = null) {
     const isEdit = Boolean(event);
     document.getElementById("event-form-title").textContent = isEdit ? "Редактировать событие" : "Добавить событие";
@@ -419,3 +673,4 @@ document.addEventListener("DOMContentLoaded", () => {
     renderGroup();
   });
 });
+
