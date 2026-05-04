@@ -86,6 +86,7 @@
     document.addEventListener("DOMContentLoaded", () => {
       const USERS_KEY = "taskmgr_users";
       const SESSION_KEY = "taskmgr_session";
+      const redirectTarget = getRedirectTarget();
 
       const legacyUsers = [
         { id: "user-admin", username: "admin", displayName: "Администратор", password: "1234" },
@@ -102,6 +103,46 @@
 
       function writeJson(key, value) {
         localStorage.setItem(key, JSON.stringify(value));
+      }
+
+      // Возвращает безопасный адрес для перехода после входа.
+      //
+      // @returns
+      // Внутренний путь сайта из параметра next или /main по умолчанию.
+      //
+      // @throws
+      // Не выбрасывает исключения напрямую.
+      //
+      // @note
+      // Проверка запрещает внешние URL, чтобы параметр next не стал открытым редиректом.
+      function getRedirectTarget() {
+        const next = new URLSearchParams(window.location.search).get("next");
+        if (!next || !next.startsWith("/") || next.startsWith("//")) return "/main";
+        return next;
+      }
+
+      // Сохраняет серверно-читаемые cookie текущего пользователя.
+      //
+      // @param user
+      // Пользователь, который успешно вошел или зарегистрировался.
+      //
+      // @param remember
+      // Флаг "Запомнить вход"; при true cookie живут 30 дней.
+      //
+      // @returns
+      // Не возвращает значение.
+      //
+      // @throws
+      // Не выбрасывает исключения напрямую.
+      //
+      // @note
+      // Cookie нужны Bottle-маршруту /orders, потому что backend не может
+      // прочитать localStorage браузера.
+      function saveAuthCookies(user, remember) {
+        const maxAge = remember ? "; max-age=2592000" : "";
+        document.cookie = `taskmgr_user_id=${encodeURIComponent(user.id)}; path=/; SameSite=Lax${maxAge}`;
+        document.cookie = `taskmgr_username=${encodeURIComponent(user.username)}; path=/; SameSite=Lax${maxAge}`;
+        document.cookie = `taskmgr_display_name=${encodeURIComponent(user.displayName)}; path=/; SameSite=Lax${maxAge}`;
       }
 
       function ensureUsers() {
@@ -141,6 +182,8 @@
 
         if (!remember) sessionStorage.setItem("tempAuth", "true");
         else sessionStorage.removeItem("tempAuth");
+
+        saveAuthCookies(user, remember);
       }
 
       function normalizeLogin(value) {
@@ -151,7 +194,12 @@
 
       const savedSession = readJson(SESSION_KEY, null);
       if (savedSession && localStorage.getItem("isAuth") === "true") {
-        window.location.href = "/main";
+        saveAuthCookies({
+          id: savedSession.userId,
+          username: savedSession.username,
+          displayName: savedSession.displayName
+        }, savedSession.remember);
+        window.location.href = redirectTarget;
         return;
       }
 
@@ -184,7 +232,7 @@
         }
 
         createSession(user, remember);
-        window.location.href = "/main";
+        window.location.href = redirectTarget;
       });
 
       document.getElementById("screen-register").addEventListener("submit", (event) => {
@@ -219,7 +267,7 @@
         users.push(user);
         writeJson(USERS_KEY, users);
         createSession(user, true);
-        window.location.href = "/main";
+        window.location.href = redirectTarget;
       });
     });
   </script>

@@ -1,15 +1,44 @@
 # Маршруты и представления Bottle-приложения.
 
+from urllib.parse import unquote
+
 from bottle import redirect, request, route, view
 
 from active_user_service import (
     build_active_user,
     empty_user_form,
+    load_all_users,
     load_active_users,
     save_active_users,
     validate_active_user,
 )
-from order_service import build_order, empty_form, load_orders, save_orders, validate_order
+from order_service import (
+    build_order,
+    empty_form,
+    load_orders,
+    load_orders_for_user,
+    save_orders,
+    validate_order,
+)
+
+
+# Получает пользователя из cookie, созданной страницей входа.
+# @returns словарь текущего пользователя или None, если пользователь не авторизован.
+# @throws не выбрасывает исключения напрямую.
+# @note Bottle не видит localStorage, поэтому для серверной защиты /orders используется cookie taskmgr_user_id.
+# FIXME для production cookie должна быть подписанной, а учетные записи нужно хранить на сервере.
+def get_current_user():
+    user_id = request.get_cookie("taskmgr_user_id")
+    if not user_id:
+        return None
+
+    username = unquote(request.get_cookie("taskmgr_username") or "")
+    display_name = unquote(request.get_cookie("taskmgr_display_name") or username)
+    return {
+        "id": unquote(user_id),
+        "username": username,
+        "display_name": display_name or username,
+    }
 
 
 # Отображает стартовую страницу сайта.
@@ -51,10 +80,15 @@ def reg_auth():
 @route('/orders', method='GET')
 @view('orders')
 def orders_page():
+    current_user = get_current_user()
+    if not current_user:
+        redirect('/reg-auth?next=/orders')
+
     return {
-        "orders": load_orders(),
+        "orders": load_orders_for_user(current_user["id"]),
         "errors": {},
         "form": empty_form(),
+        "current_user": current_user,
     }
 
 
@@ -65,6 +99,10 @@ def orders_page():
 @route('/orders', method='POST')
 @view('orders')
 def add_order():
+    current_user = get_current_user()
+    if not current_user:
+        redirect('/reg-auth?next=/orders')
+
     # Копируем только ожидаемые поля, чтобы лишние данные не попали в JSON.
     form = {
         "number": (request.forms.getunicode("number") or "").strip(),
@@ -75,16 +113,18 @@ def add_order():
     }
 
     orders = load_orders()
-    errors = validate_order(form, orders)
+    user_orders = load_orders_for_user(current_user["id"])
+    errors = validate_order(form, user_orders)
 
     if errors:
         return {
-            "orders": orders,
+            "orders": user_orders,
             "errors": errors,
             "form": form,
+            "current_user": current_user,
         }
 
-    orders.append(build_order(form))
+    orders.append(build_order(form, current_user))
     save_orders(orders)
     redirect('/orders')
 
@@ -116,18 +156,22 @@ def add_active_user():
         "description": (request.forms.getunicode("description") or "").strip(),
         "active_date": (request.forms.getunicode("active_date") or "").strip(),
         "phone": (request.forms.getunicode("phone") or "").strip(),
+        "events_created": (request.forms.getunicode("events_created") or "").strip(),
+        "comments_count": (request.forms.getunicode("comments_count") or "").strip(),
+        "notes_count": (request.forms.getunicode("notes_count") or "").strip(),
+        "groups_joined": (request.forms.getunicode("groups_joined") or "").strip(),
     }
 
-    users = load_active_users()
-    errors = validate_active_user(form, users)
+    all_users = load_all_users()
+    errors = validate_active_user(form, all_users)
 
     if errors:
         return {
-            "users": users,
+            "users": load_active_users(),
             "errors": errors,
             "form": form,
         }
 
-    users.append(build_active_user(form))
-    save_active_users(users)
+    all_users.append(build_active_user(form))
+    save_active_users(all_users)
     redirect('/active-users')

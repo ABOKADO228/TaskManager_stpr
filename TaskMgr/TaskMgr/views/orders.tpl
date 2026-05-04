@@ -29,13 +29,13 @@
         <p class="orders-eyebrow">Практическая интеграция Bottle</p>
         <h1>Оформленные заказы</h1>
         <p>
-          Список загружается Python-кодом из JSON-файла. Новый заказ проходит
-          серверную проверку и появляется в общем списке после отправки формы.
+          Список загружается Python-кодом из JSON-файла. На странице видны только заказы
+          текущего пользователя: {{current_user.get("display_name", current_user.get("username", ""))}}.
         </p>
       </div>
       <div class="orders-count">
         <strong>{{len(orders)}}</strong>
-        <span>заказов в списке</span>
+        <span>ваших заказов</span>
       </div>
     </section>
 

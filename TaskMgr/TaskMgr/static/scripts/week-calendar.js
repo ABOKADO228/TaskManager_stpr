@@ -249,6 +249,9 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.removeItem("userRole");
     localStorage.removeItem("rememberMe");
     sessionStorage.removeItem("tempAuth");
+    document.cookie = "taskmgr_user_id=; path=/; max-age=0; SameSite=Lax";
+    document.cookie = "taskmgr_username=; path=/; max-age=0; SameSite=Lax";
+    document.cookie = "taskmgr_display_name=; path=/; max-age=0; SameSite=Lax";
   }
 
   // Проверяет наличие активной сессии и перенаправляет гостя на главную.
