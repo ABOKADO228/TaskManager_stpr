@@ -1,0 +1,34 @@
+.tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.tab {
+  min-height: 42px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: #191b20;
+  color: #c8ccd7;
+  cursor: pointer;
+}
+
+.tab.active {
+  background: #4e6cff;
+  color: white;
+}
+
+.screen {
+  display: none;
+}
+
+.screen.active {
+  display: grid;
+  gap: 14px;
+}
+
+.header {
+  font-size: 24px;
+  font-weight: 800;
+}

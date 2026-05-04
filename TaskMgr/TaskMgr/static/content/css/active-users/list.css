@@ -1,0 +1,55 @@
+.users-list {
+  min-width: 0;
+  display: grid;
+  gap: 14px;
+}
+
+.user-cards {
+  display: grid;
+  gap: 12px;
+}
+
+.user-card,
+.empty-users {
+  padding: 16px;
+  border-radius: 8px;
+  background: #22252c;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.user-card__top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.user-nick {
+  padding: 5px 8px;
+  border-radius: 6px;
+  background: rgba(143, 179, 255, 0.14);
+  color: #a9c5ff;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.user-card time {
+  color: #aeb5c5;
+  font-size: 13px;
+}
+
+.user-card p {
+  margin: 0 0 12px;
+  color: #dce2f2;
+  line-height: 1.5;
+}
+
+.phone-link {
+  color: #91f0bc;
+  font-weight: 800;
+}
+
+.empty-users {
+  color: #aeb5c5;
+}

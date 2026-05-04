@@ -1,0 +1,59 @@
+.field {
+  display: grid;
+  gap: 7px;
+}
+
+.field span,
+.row span {
+  color: #c8ccd7;
+  font-size: 14px;
+}
+
+.input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #17191e;
+  color: #f7f8fb;
+  outline: none;
+}
+
+.input:focus {
+  border-color: #8fb3ff;
+  box-shadow: 0 0 0 3px rgba(78, 108, 255, 0.16);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.check {
+  width: 16px;
+  height: 16px;
+  accent-color: #4e6cff;
+}
+
+.btn {
+  min-height: 46px;
+  border: 0;
+  border-radius: 8px;
+  background: #4e6cff;
+  color: white;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.message {
+  min-height: 20px;
+  margin: 0;
+  color: #ff9aa8;
+  font-size: 14px;
+}
+
+.message[data-type="success"] {
+  color: #8ee6b1;
+}
