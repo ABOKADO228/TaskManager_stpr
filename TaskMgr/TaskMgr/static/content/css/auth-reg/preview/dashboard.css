@@ -1,0 +1,132 @@
+.dashboard {
+  display: grid;
+  gap: 14px;
+}
+
+.dashboard__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.dashboard__header h3,
+.platforms h3,
+.cta h2 {
+  font-size: 1.5rem;
+}
+
+.task {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.task__info {
+  display: flex;
+  gap: 12px;
+}
+
+.task__check {
+  width: 20px;
+  height: 20px;
+  border-radius: 7px;
+  border: 2px solid #79b8ff;
+  margin-top: 2px;
+  background: rgba(77,163,255,0.08);
+}
+
+.task h4 {
+  margin-bottom: 4px;
+}
+
+.task p {
+  color: var(--muted);
+  font-size: 0.94rem;
+}
+
+.tag {
+  height: fit-content;
+  padding: 8px 10px;
+  border-radius: 12px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.tag--green {
+  background: rgba(50,213,131,0.16);
+  color: #7ff0b1;
+}
+
+.tag--blue {
+  background: rgba(77,163,255,0.16);
+  color: #a9d1ff;
+}
+
+.tag--purple {
+  background: rgba(124,92,255,0.18);
+  color: #d0c2ff;
+}
+
+.platforms__list {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.platform {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.platform__left {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.platform__icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, rgba(77,163,255,0.2), rgba(124,92,255,0.2));
+  border: 1px solid rgba(255,255,255,0.12);
+  font-weight: 800;
+}
+
+.platform small {
+  color: var(--muted);
+}
+
+.cta {
+  margin: 44px 0 60px;
+  padding: 34px;
+  border-radius: 28px;
+  background: linear-gradient(135deg, rgba(77,163,255,0.18), rgba(124,92,255,0.22)), rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: var(--shadow);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.cta p {
+  color: #d7e0f7;
+  max-width: 760px;
+  margin-top: 10px;
+}

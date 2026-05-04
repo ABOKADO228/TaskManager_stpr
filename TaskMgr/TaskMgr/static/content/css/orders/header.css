@@ -1,0 +1,51 @@
+.orders-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(23, 25, 30, 0.92);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+}
+
+.orders-header__inner {
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.orders-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+}
+
+.orders-logo__mark {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: #4e6cff;
+}
+
+.orders-nav {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: #c8ccd7;
+  font-weight: 700;
+}
+
+.orders-nav a {
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+
+.orders-nav a:hover,
+.orders-nav .active {
+  background: #303541;
+  color: #ffffff;
+}

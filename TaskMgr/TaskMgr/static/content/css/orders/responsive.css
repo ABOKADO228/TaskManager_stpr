@@ -1,0 +1,32 @@
+@media (max-width: 900px) {
+  .orders-layout,
+  .orders-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .orders-layout {
+    display: grid;
+  }
+
+  .orders-hero {
+    display: grid;
+    align-items: start;
+  }
+}
+
+@media (max-width: 700px) {
+  .orders-header__inner,
+  .orders-nav {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .orders-header__inner {
+    padding: 12px 0;
+  }
+
+  .orders-nav {
+    width: 100%;
+    gap: 6px;
+  }
+}

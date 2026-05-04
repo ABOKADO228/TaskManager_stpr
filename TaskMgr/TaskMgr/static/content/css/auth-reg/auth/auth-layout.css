@@ -1,0 +1,17 @@
+.auth-shell {
+  min-height: 100svh;
+  display: grid;
+  grid-template-columns: minmax(320px, 1.1fr) minmax(340px, 440px);
+  gap: 24px;
+  align-items: center;
+  padding: 32px;
+}
+
+.auth-card {
+  width: 100%;
+  padding: 20px;
+  background: #22252c;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.28);
+}

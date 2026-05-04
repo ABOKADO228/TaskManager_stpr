@@ -1,0 +1,15 @@
+@media (max-width: 860px) {
+  .auth-shell {
+    grid-template-columns: 1fr;
+    padding: 16px;
+  }
+
+  .auth-brand {
+    min-height: auto;
+    gap: 32px;
+  }
+
+  h1 {
+    font-size: 30px;
+  }
+}

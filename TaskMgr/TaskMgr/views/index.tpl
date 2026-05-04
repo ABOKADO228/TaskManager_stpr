@@ -25,10 +25,12 @@
         <a href="#features">Возможности</a>
         <a href="#modes">Для кого</a>
         <a href="#platforms">Платформы</a>
+        <a href="/orders">Заказы</a>
         <a href="#news">Новинки</a>
       </nav>
 
       <div class="nav__actions">
+        <a class="btn btn--ghost" href="/orders">Оформленные заказы</a>
         <a class="btn btn--ghost" href="/reg-auth">Войти</a>
         <a class="btn btn--primary" href="/reg-auth">Начать бесплатно</a>
       </div>

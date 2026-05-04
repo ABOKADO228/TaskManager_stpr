@@ -1,0 +1,25 @@
+.action-btn,
+.primary-btn,
+.logout-btn {
+  min-height: 40px;
+  border-radius: 8px;
+  border: 0;
+  padding: 0 12px;
+  color: #ffffff;
+  font-weight: 800;
+}
+
+.action-btn,
+.primary-btn {
+  background: #4e6cff;
+}
+
+.action-btn--ghost {
+  background: #303541;
+}
+
+.logout-btn {
+  margin-top: auto;
+  background: #3a2028;
+  color: #ffb5c0;
+}

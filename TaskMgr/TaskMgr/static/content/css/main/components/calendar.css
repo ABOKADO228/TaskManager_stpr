@@ -1,0 +1,80 @@
+.calendar-panel {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.calendar-toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border-radius: 8px;
+  background: #191b20;
+}
+
+.week-grid {
+  min-height: 0;
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(130px, 1fr));
+  gap: 10px;
+  overflow: auto;
+  padding-bottom: 4px;
+}
+
+.day-column {
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  background: #191b20;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.day-column__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background: #2a2f3a;
+  font-weight: 800;
+}
+
+.day-column__events {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+}
+
+.event-card {
+  width: 100%;
+  display: grid;
+  gap: 5px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #242832;
+  color: #f6f7fb;
+  text-align: left;
+}
+
+.event-card:hover,
+.event-card--active {
+  border-color: #8fb3ff;
+  background: #2d3447;
+}
+
+.event-card__type {
+  width: fit-content;
+  padding: 3px 7px;
+  border-radius: 6px;
+  background: rgba(143, 179, 255, 0.14);
+  color: #a9c5ff;
+  font-size: 12px;
+  font-weight: 800;
+}
