@@ -24,4 +24,8 @@
     width: 100%;
     gap: 6px;
   }
+
+  .metric-grid {
+    grid-template-columns: 1fr;
+  }
 }

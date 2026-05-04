@@ -15,11 +15,10 @@
       </a>
 
       <nav class="users-nav" aria-label="Основная навигация">
-        <a href="/">Главная</a>
-        <a href="/reg-auth">Вход</a>
         <a href="/main">Расписание</a>
         <a href="/orders">Заказы</a>
         <a class="active" href="/active-users">Активные пользователи</a>
+        <a href="/reg-auth">Вход</a>
       </nav>
     </div>
   </header>
@@ -30,8 +29,9 @@
         <p class="users-eyebrow">Вариант 6</p>
         <h1>Активные пользователи</h1>
         <p>
-          Список загружается Python-кодом из файла. Нового активного пользователя
-          можно добавить через форму с серверной проверкой даты и телефона.
+          Список загружается Python-кодом из файла существующих пользователей.
+          Активные участники выбираются автоматически по рейтингу: события,
+          комментарии, заметки, участие в группах и свежесть активности.
         </p>
       </div>
       <div class="users-count">
@@ -103,6 +103,64 @@
           </label>
         </div>
 
+        <div class="metric-grid">
+          <label class="field">
+            <span>Создано событий</span>
+            <input
+              type="number"
+              name="events_created"
+              min="0"
+              value="{{form.get('events_created', '0')}}"
+              required
+            />
+            % if errors.get("events_created"):
+              <small class="field-error">{{errors["events_created"]}}</small>
+            % end
+          </label>
+
+          <label class="field">
+            <span>Комментариев</span>
+            <input
+              type="number"
+              name="comments_count"
+              min="0"
+              value="{{form.get('comments_count', '0')}}"
+              required
+            />
+            % if errors.get("comments_count"):
+              <small class="field-error">{{errors["comments_count"]}}</small>
+            % end
+          </label>
+
+          <label class="field">
+            <span>Заметок</span>
+            <input
+              type="number"
+              name="notes_count"
+              min="0"
+              value="{{form.get('notes_count', '0')}}"
+              required
+            />
+            % if errors.get("notes_count"):
+              <small class="field-error">{{errors["notes_count"]}}</small>
+            % end
+          </label>
+
+          <label class="field">
+            <span>Групп</span>
+            <input
+              type="number"
+              name="groups_joined"
+              min="0"
+              value="{{form.get('groups_joined', '0')}}"
+              required
+            />
+            % if errors.get("groups_joined"):
+              <small class="field-error">{{errors["groups_joined"]}}</small>
+            % end
+          </label>
+        </div>
+
         % if errors:
           <div class="form-alert">
             Проверьте введенные данные. Значения сохранены, исправьте ошибки и повторите отправку.
@@ -114,7 +172,7 @@
 
       <section class="users-list" aria-label="Список активных пользователей">
         <div class="section-title">
-          <span>Сортировка: самые активные по дате сверху</span>
+          <span>Сортировка: рейтинг активности сверху</span>
           <h2>Перечень пользователей</h2>
         </div>
 
@@ -126,13 +184,23 @@
                   <span class="user-nick">@{{user["nick"]}}</span>
                   <time datetime="{{user['active_date']}}">{{user["active_date"]}}</time>
                 </div>
+                <div class="activity-score">
+                  <strong>{{user["activity_score"]}}</strong>
+                  <span>баллов активности</span>
+                </div>
                 <p>{{user["description"]}}</p>
+                <div class="activity-metrics">
+                  <span>События: {{user.get("events_created", 0)}}</span>
+                  <span>Комментарии: {{user.get("comments_count", 0)}}</span>
+                  <span>Заметки: {{user.get("notes_count", 0)}}</span>
+                  <span>Группы: {{user.get("groups_joined", 0)}}</span>
+                </div>
                 <a class="phone-link" href="tel:{{user['phone']}}">{{user["phone"]}}</a>
               </article>
             % end
           </div>
         % else:
-          <div class="empty-users">Активных пользователей пока нет. Добавьте первого участника через форму.</div>
+          <div class="empty-users">Пока нет пользователей, которые прошли порог активности.</div>
         % end
       </section>
     </section>

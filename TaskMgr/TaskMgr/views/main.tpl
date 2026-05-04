@@ -37,6 +37,15 @@
       </section>
 
       <section class="side-section">
+        <div class="side-section__title">Разделы</div>
+        <nav class="sidebar-nav" aria-label="Навигация по проекту">
+          <a href="/">Главная</a>
+          <a href="/orders">Заказы</a>
+          <a href="/active-users">Активные пользователи</a>
+        </nav>
+      </section>
+
+      <section class="side-section">
         <div class="side-section__title">Заметки</div>
         <textarea class="notes-input" id="notes-input" placeholder="Личные заметки по учебе"></textarea>
       </section>

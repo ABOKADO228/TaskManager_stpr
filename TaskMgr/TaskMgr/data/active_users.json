@@ -1,20 +1,32 @@
 [
   {
     "nick": "eduard_starosta",
-    "description": "Активно ведет расписание группы и комментирует учебные события.",
+    "description": "Ведет расписание группы, создает учебные события и помогает участникам.",
     "active_date": "2026-05-04",
-    "phone": "+7 (999) 111-22-33"
+    "phone": "+7 (999) 111-22-33",
+    "events_created": 6,
+    "comments_count": 14,
+    "notes_count": 5,
+    "groups_joined": 2
   },
   {
     "nick": "anna_notes",
     "description": "Добавляет полезные заметки и помогает сверять домашние задания.",
     "active_date": "2026-05-02",
-    "phone": "89992223344"
+    "phone": "89992223344",
+    "events_created": 1,
+    "comments_count": 8,
+    "notes_count": 12,
+    "groups_joined": 1
   },
   {
-    "nick": "ads",
-    "description": "asdasdasSAas",
-    "active_date": "1111-11-11",
-    "phone": "+79119113364"
+    "nick": "quiet_reader",
+    "description": "Редко пишет комментарии, но регулярно просматривает расписание.",
+    "active_date": "2026-04-28",
+    "phone": "+7 (999) 555-44-33",
+    "events_created": 0,
+    "comments_count": 1,
+    "notes_count": 1,
+    "groups_joined": 1
   }
 ]

@@ -16,7 +16,7 @@
 
   <header class="navbar">
     <div class="container navbar__inner">
-      <a href="#" class="logo">
+      <a href="/" class="logo" aria-label="TaskMgr - главная">
         <span class="logo__mark">T</span>
         <span>TaskMgr</span>
       </a>
@@ -26,15 +26,12 @@
         <a href="#modes">Для кого</a>
         <a href="#platforms">Платформы</a>
         <a href="/orders">Заказы</a>
-        <a href="/active-users">Пользователи</a>
+        <a href="/active-users">Активные пользователи</a>
         <a href="#news">Новинки</a>
       </nav>
 
       <div class="nav__actions">
-        <a class="btn btn--ghost" href="/active-users">Активные пользователи</a>
-        <a class="btn btn--ghost" href="/orders">Оформленные заказы</a>
-        <a class="btn btn--ghost" href="/reg-auth">Войти</a>
-        <a class="btn btn--primary" href="/reg-auth">Начать бесплатно</a>
+        <span class="nav__status">Учебный прототип</span>
       </div>
     </div>
   </header>
@@ -52,8 +49,7 @@
             </p>
 
             <div class="hero__actions">
-              <a class="btn btn--primary" href="/reg-auth">Попробовать сейчас</a>
-              <a class="btn btn--ghost" href="#features">Смотреть возможности</a>
+              <a class="btn btn--primary" href="/reg-auth">Начать работу</a>
             </div>
 
             <div class="hero__meta">
@@ -80,7 +76,7 @@
             <h2>Рекомендуемые режимы работы</h2>
             <p>Структура секции вдохновлена крупными медиа-лендингами: большие карточки, яркий визуал, короткий оффер и понятный сценарий входа.</p>
           </div>
-          <a class="link-more" href="#">Все возможности</a>
+          <span class="link-more">4 режима</span>
         </div>
 
         <div class="cards">
@@ -225,7 +221,7 @@
             <h2>Готов начать новый учебный сезон сильнее?</h2>
             <p>Создай аккаунт, перенеси предметы и дедлайны в систему, а потом управляй ими из красивого, насыщенного интерфейса в стиле крупного продуктового портала.</p>
           </div>
-          <a class="btn btn--primary" href="/reg-auth">Создать аккаунт</a>
+          <span class="tag tag--blue">Регистрация доступна</span>
         </div>
       </div>
     </section>

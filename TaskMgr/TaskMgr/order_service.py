@@ -62,6 +62,26 @@ def load_orders(path: Path | None = None) -> list[dict[str, str]]:
     return sorted(loaded, key=lambda item: item.get("date", ""), reverse=True)
 
 
+# Возвращает только заказы указанного пользователя.
+# @param orders полный список заказов из JSON-файла.
+# @param user_id идентификатор текущего пользователя из серверной cookie.
+# @returns список заказов, у которых owner_id совпадает с user_id.
+# @throws не выбрасывает исключения напрямую.
+# @note заказы без owner_id считаются старыми общими данными и не показываются в личном кабинете.
+def filter_orders_for_user(orders: list[dict[str, str]], user_id: str) -> list[dict[str, str]]:
+    return [order for order in orders if order.get("owner_id") == user_id]
+
+
+# Загружает личные заказы пользователя из JSON-файла.
+# @param user_id идентификатор текущего пользователя.
+# @param path путь к JSON-файлу; если None, используется data/orders.json.
+# @returns список личных заказов пользователя, отсортированный по дате от новых к старым.
+# @throws не выбрасывает исключения наружу; ошибки чтения обрабатываются в load_orders.
+# @note функция нужна маршрутам, чтобы не дублировать фильтрацию в контроллере.
+def load_orders_for_user(user_id: str, path: Path | None = None) -> list[dict[str, str]]:
+    return filter_orders_for_user(load_orders(path), user_id)
+
+
 # Сохраняет оформленные заказы в JSON-файл.
 # @param orders список заказов для записи.
 # @param path путь к JSON-файлу; если None, используется data/orders.json.
@@ -105,7 +125,7 @@ def is_valid_phone(value: str) -> bool:
 
 # Проверяет форму добавления оформленного заказа.
 # @param form словарь с полями number, author, text, date, phone.
-# @param existing_orders уже сохраненные заказы для проверки уникальности номера.
+# @param existing_orders уже сохраненные заказы текущего пользователя для проверки уникальности номера.
 # @returns словарь ошибок вида {имя_поля: текст_ошибки}; пустой словарь означает успех.
 # @throws KeyError если в form отсутствует обязательный ключ.
 # @note имена ключей ошибок совпадают с именами HTML-полей для вывода рядом с input.
@@ -148,16 +168,19 @@ def validate_order(form: dict[str, str], existing_orders: list[dict[str, str]]) 
     return errors
 
 
-# Создает объект заказа из проверенной формы.
+# Создает объект заказа из проверенной формы и привязывает его к владельцу.
 # @param form валидный словарь формы с полями number, author, text, date, phone.
+# @param owner текущий пользователь с полями id и display_name; если None, owner_id останется пустым.
 # @returns словарь заказа для сохранения в JSON.
 # @throws KeyError если в form отсутствует обязательный ключ.
-# @note функцию нужно вызывать только после validate_order.
-def build_order(form: dict[str, str]) -> dict[str, str]:
+# @note функцию нужно вызывать только после validate_order, иначе в JSON могут попасть непроверенные данные.
+def build_order(form: dict[str, str], owner: dict[str, str] | None = None) -> dict[str, str]:
     return {
         "number": form["number"].strip(),
         "author": form["author"].strip(),
         "text": form["text"].strip(),
         "date": form["date"].strip(),
         "phone": form["phone"].strip(),
+        "owner_id": (owner or {}).get("id", ""),
+        "owner_name": (owner or {}).get("display_name", ""),
     }

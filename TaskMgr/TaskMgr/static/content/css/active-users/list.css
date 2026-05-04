@@ -45,6 +45,44 @@
   line-height: 1.5;
 }
 
+.activity-score {
+  width: fit-content;
+  display: inline-grid;
+  grid-template-columns: auto auto;
+  gap: 6px;
+  align-items: baseline;
+  margin-bottom: 12px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(145, 240, 188, 0.12);
+  color: #91f0bc;
+}
+
+.activity-score strong {
+  font-size: 22px;
+}
+
+.activity-score span {
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.activity-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.activity-metrics span {
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: #191b20;
+  color: #c8ccd7;
+  font-size: 13px;
+  font-weight: 700;
+}
+
 .phone-link {
   color: #91f0bc;
   font-weight: 800;

@@ -2,7 +2,7 @@
 
 import unittest
 
-from order_service import is_valid_order_date, is_valid_phone
+from order_service import build_order, filter_orders_for_user, is_valid_order_date, is_valid_phone
 
 
 class OrderValidationTests(unittest.TestCase):
@@ -33,6 +33,40 @@ class OrderValidationTests(unittest.TestCase):
     # @note валидный номер должен содержать 11 цифр и начинаться с 7 или 8.
     def test_invalid_phone(self):
         self.assertFalse(is_valid_phone("12345"))
+
+    # Проверяет, что список заказов фильтруется по текущему пользователю.
+    # @returns None.
+    # @throws AssertionError если фильтр вернет чужой заказ.
+    # @note используется серверным маршрутом /orders для личного кабинета.
+    def test_filter_orders_for_current_user(self):
+        orders = [
+            {"number": "ORD-1", "owner_id": "user-admin"},
+            {"number": "ORD-2", "owner_id": "user-user1"},
+            {"number": "ORD-3"},
+        ]
+
+        result = filter_orders_for_user(orders, "user-admin")
+
+        self.assertEqual([order["number"] for order in result], ["ORD-1"])
+
+    # Проверяет, что новый заказ сохраняет владельца.
+    # @returns None.
+    # @throws AssertionError если build_order не добавит owner_id или owner_name.
+    # @note без этих полей заказ не сможет отображаться только у своего пользователя.
+    def test_build_order_adds_owner(self):
+        form = {
+            "number": "ORD-10",
+            "author": "Анна",
+            "text": "Описание заказа",
+            "date": "2026-05-01",
+            "phone": "+7 (999) 123-45-67",
+        }
+        owner = {"id": "user-admin", "display_name": "Администратор"}
+
+        order = build_order(form, owner)
+
+        self.assertEqual(order["owner_id"], "user-admin")
+        self.assertEqual(order["owner_name"], "Администратор")
 
 
 if __name__ == "__main__":
