@@ -15,10 +15,10 @@
       </a>
 
       <nav class="orders-nav" aria-label="Основная навигация">
-        <a href="/">Главная</a>
-        <a href="/reg-auth">Вход</a>
         <a href="/main">Расписание</a>
         <a class="active" href="/orders">Оформленные заказы</a>
+        <a href="/active-users">Активные пользователи</a>
+        <a href="/reg-auth">Вход</a>
       </nav>
     </div>
   </header>

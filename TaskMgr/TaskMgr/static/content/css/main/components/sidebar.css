@@ -53,6 +53,26 @@
   gap: 8px;
 }
 
+.sidebar-nav {
+  display: grid;
+  gap: 8px;
+}
+
+.sidebar-nav a {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #191b20;
+  color: #dce2f2;
+  text-decoration: none;
+  font-weight: 800;
+}
+
+.sidebar-nav a:hover {
+  background: #303541;
+  color: #ffffff;
+}
+
 .notes-input {
   width: 100%;
   min-height: 180px;
