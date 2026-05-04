@@ -157,6 +157,36 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   }
 
+  // Дозаполняет профиль текущего пользователя в старых группах.
+  //
+  // @param group
+  // Группа, которую нужно проверить на наличие memberProfiles.
+  //
+  // @returns
+  // Группу с актуальным профилем текущего пользователя или исходную группу.
+  //
+  // @throws
+  // Может выбросить ошибку записи в localStorage.
+  //
+  // @note
+  // Нужна для групп, созданных до появления списка участников с именами.
+  function ensureCurrentMemberProfile(group) {
+    const session = getSession();
+    if (!group || !group.members?.[session.userId]) return group;
+
+    group.memberProfiles ??= {};
+    if (group.memberProfiles[session.userId]) return group;
+
+    const groups = getGroups();
+    const storedGroup = groups.find((item) => item.id === group.id);
+    if (!storedGroup) return group;
+
+    storedGroup.memberProfiles ??= {};
+    storedGroup.memberProfiles[session.userId] = getCurrentMemberProfile();
+    saveGroups(groups);
+    return storedGroup;
+  }
+
   // Обновляет текущую сессию частичными данными.
   //
   // @param data
@@ -371,7 +401,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // @note
   // Кнопка добавления события скрывается для обычного участника.
   function renderGroup() {
-    const group = getCurrentGroup();
+    const group = ensureCurrentMemberProfile(getCurrentGroup());
     const card = document.getElementById("current-group-card");
     const rolePill = document.getElementById("role-pill");
     const title = document.getElementById("workspace-title");
@@ -497,6 +527,9 @@ document.addEventListener("DOMContentLoaded", () => {
   //
   // @note
   // Для старых групп без memberProfiles показывается запасное имя по id.
+  //
+  // FIXME
+  // В карточке участника нужно явно показывать логин вместе с id пользователя.
   function renderMembers(group) {
     const members = Object.entries(group.members ?? {});
     if (!members.length) return '<p class="muted">Участников пока нет.</p>';
@@ -721,7 +754,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (event.target.id === "delete-event-button") {
       const group = getCurrentGroup();
-      if (selectedEventId && canManage(group)) deleteGroupEvent(selectedEventId);
+      if (selectedEventId && canManage(group) && window.confirm("Удалить выбранное событие из недели?")) {
+        deleteGroupEvent(selectedEventId);
+      }
     }
   });
 

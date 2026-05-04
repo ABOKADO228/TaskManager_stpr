@@ -28,6 +28,7 @@
 - `static/content/css/active-users/` - CSS-оформление страницы.
 - `tests/test_active_user_validation.py` - unit-тесты даты активности и телефона.
 - `views/index.tpl` - главная навигация дополнена ссылкой на активных пользователей.
+- `README.md` и `SPECIFICATION.md` - документация приведена к текущей структуре CSS и поведению страниц.
 
 ## 3. UML-диаграмма
 
@@ -52,6 +53,11 @@ classDiagram
         +description: string
         +active_date: string
         +phone: string
+        +events_created: int
+        +comments_count: int
+        +notes_count: int
+        +groups_joined: int
+        +activity_score: int
     }
 
     class ActiveUsersJson {
@@ -59,20 +65,23 @@ classDiagram
     }
 
     ActiveUsersPage --> ActiveUserService
-    ActiveUserService --> ActiveUser
+    ActiveUserService --> ActiveUser : calculates score
     ActiveUserService --> ActiveUsersJson
 ```
 
 ## 4. Код с комментариями
 
-Ключевой модуль `active_user_service.py` содержит комментарии к правилам даты, телефона, обработке поврежденного JSON и назначению функций.
+Ключевой модуль `active_user_service.py` содержит комментарии к правилам даты, телефона, обработке поврежденного JSON, расчету рейтинга и назначению функций.
 
 Пример проверки телефона:
 
 ```python
+# Проверяет телефон пользователя.
+# @param value телефон, введенный в форму.
+# @returns True, если телефон содержит 11 цифр и начинается с 7 или 8; иначе False.
+# @throws не выбрасывает исключения.
+# @note формат допускает пробелы, скобки и дефисы, но хранится исходная строка.
 def is_valid_user_phone(value: str) -> bool:
-    """Validate the active user's phone number."""
-
     if not PHONE_PATTERN.match(value):
         return False
 
@@ -84,10 +93,8 @@ def is_valid_user_phone(value: str) -> bool:
 
 ```python
 if errors:
-    # Return the same form values so the user can correct only invalid
-    # fields instead of retyping the whole form.
     return {
-        "users": users,
+        "users": load_active_users(),
         "errors": errors,
         "form": form,
     }
@@ -97,10 +104,12 @@ if errors:
 
 В отчет по работе нужно вставить актуальные изображения из браузера:
 
-- главная страница `/` с добавленной ссылкой `Пользователи`;
+- главная страница `/` с добавленной ссылкой `Активные пользователи`;
 - страница `/active-users` со списком активных пользователей;
 - страница `/active-users` с ошибками валидации;
 - страница `/active-users` после успешного добавления пользователя;
+- рабочее пространство `/main` с переключением групп, участниками и удалением события старостой;
+- страница `/orders`, открытая под разными пользователями, чтобы показать фильтрацию личных заказов;
 - результат запуска unit-тестов;
 - окно системы контроля версий с измененными файлами.
 
@@ -117,7 +126,10 @@ python -m unittest discover -s tests
 - корректная дата `YYYY-MM-DD`;
 - некорректный формат даты;
 - корректный российский телефон;
-- некорректный короткий телефон.
+- некорректный короткий телефон;
+- расчет рейтинга активности;
+- фильтрация заказов по текущему пользователю;
+- сохранение владельца нового заказа.
 
 ## 7. Отладка и исключения
 

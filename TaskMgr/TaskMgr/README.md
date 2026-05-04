@@ -144,9 +144,9 @@ python app.py
 
 `data/orders.json` - файл с заказами, который используется страницей `/orders`.
 
-`tests/test_active_user_validation.py` - unit-тесты проверки даты активности и телефона.
+`tests/test_active_user_validation.py` - unit-тесты проверки даты активности, телефона и рейтинга активности.
 
-`tests/test_order_validation.py` - unit-тесты проверки даты и телефона.
+`tests/test_order_validation.py` - unit-тесты проверки даты, телефона, владельца и фильтрации заказов.
 
 `static/scripts/week-calendar.js` - основная клиентская логика: авторизация, группы, роли, события, заметки и комментарии.
 
@@ -156,11 +156,13 @@ python app.py
 
 ## Работа со стилями
 
-Проект использует обычный CSS без SCSS/Sass. Три файла ниже являются точками входа и содержат только `@import`:
+Проект использует обычный CSS без SCSS/Sass. Файлы ниже являются точками входа и содержат только `@import`:
 
 - `static/content/css/auth-reg/preview.css` - стили стартовой страницы;
 - `static/content/css/auth-reg/auth-reg.css` - стили входа и регистрации;
-- `static/content/css/main/main.css` - стили главного рабочего экрана.
+- `static/content/css/main/main.css` - стили главного рабочего экрана;
+- `static/content/css/orders/orders.css` - стили страницы оформленных заказов;
+- `static/content/css/active-users/active-users.css` - стили страницы активных пользователей.
 
 Основные стили разнесены по маленьким файлам:
 
@@ -249,7 +251,7 @@ python -m unittest discover -s tests
 
 - `localStorage.taskmgr_users` - аккаунты;
 - `localStorage.taskmgr_session` - текущая сессия;
-- `localStorage.taskmgr_groups` - группы, участники, роли, события и комментарии;
+- `localStorage.taskmgr_groups` - группы, профили участников, роли, события и комментарии;
 - `localStorage.taskmgr_notes_<userId>` - личные заметки;
 - `localStorage.isAuth` - флаг авторизации;
 - `localStorage.username` - логин текущего пользователя;
