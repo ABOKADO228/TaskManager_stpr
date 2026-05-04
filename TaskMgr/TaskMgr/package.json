@@ -1,0 +1,7 @@
+{
+  "name": "TaskMgr",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Учебный веб-проект на Bottle с обычными CSS-стилями.",
+  "scripts": {}
+}

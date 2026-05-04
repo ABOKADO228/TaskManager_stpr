@@ -1,0 +1,21 @@
+body {
+  background: #17191e;
+  color: #f6f7fb;
+}
+
+.profile__meta,
+.muted,
+.toolbar-label,
+.group-card span,
+.day-empty {
+  color: #aeb5c5;
+  font-size: 13px;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  color: #8fb3ff;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}

@@ -1,0 +1,27 @@
+@media (max-width: 900px) {
+  .users-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .users-hero {
+    display: grid;
+    align-items: start;
+  }
+}
+
+@media (max-width: 700px) {
+  .users-header__inner,
+  .users-nav {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .users-header__inner {
+    padding: 12px 0;
+  }
+
+  .users-nav {
+    width: 100%;
+    gap: 6px;
+  }
+}

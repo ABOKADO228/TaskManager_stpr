@@ -1,0 +1,16 @@
+.app-shell {
+  height: 100svh;
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr) 340px;
+  gap: 12px;
+  padding: 12px;
+}
+
+.sidebar,
+.workspace,
+.details-panel {
+  min-height: 0;
+  background: #22252c;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+}

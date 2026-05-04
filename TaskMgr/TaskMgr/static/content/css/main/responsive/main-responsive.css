@@ -1,0 +1,36 @@
+@media (max-width: 1100px) {
+  body {
+    overflow: auto;
+  }
+
+  .app-shell {
+    height: auto;
+    min-height: 100svh;
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar,
+  .details-panel {
+    min-height: auto;
+  }
+
+  .week-grid {
+    min-height: 520px;
+  }
+}
+
+@media (max-width: 640px) {
+  .app-shell {
+    padding: 8px;
+  }
+
+  .topline,
+  .calendar-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
