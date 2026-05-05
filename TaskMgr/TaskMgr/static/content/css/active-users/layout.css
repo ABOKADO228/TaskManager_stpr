@@ -52,6 +52,19 @@
   margin-top: 16px;
 }
 
+.page-notice {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-weight: 800;
+}
+
+.page-notice--success {
+  background: rgba(145, 240, 188, 0.12);
+  color: #91f0bc;
+  border: 1px solid rgba(145, 240, 188, 0.22);
+}
+
 .section-title h2 {
   margin: 6px 0 0;
 }

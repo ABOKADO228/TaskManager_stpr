@@ -16,7 +16,7 @@
 
       <nav class="orders-nav" aria-label="Основная навигация">
         <a href="/main">Расписание</a>
-        <a class="active" href="/orders">Оформленные заказы</a>
+        <a class="active" href="/orders">Заказы</a>
         <a href="/active-users">Активные пользователи</a>
         <a href="/reg-auth">Вход</a>
       </nav>
@@ -26,23 +26,28 @@
   <main class="orders-container orders-page">
     <section class="orders-hero">
       <div>
-        <p class="orders-eyebrow">Практическая интеграция Bottle</p>
+        <p class="orders-eyebrow">Личный список</p>
         <h1>Оформленные заказы</h1>
         <p>
-          Список загружается Python-кодом из JSON-файла. На странице видны только заказы
-          текущего пользователя: {{current_user.get("display_name", current_user.get("username", ""))}}.
+          Здесь показаны только заказы пользователя:
+          {{current_user.get("display_name", current_user.get("username", ""))}}.
+          Новые записи сохраняются в JSON-файл и сразу появляются в списке.
         </p>
       </div>
       <div class="orders-count">
         <strong>{{len(orders)}}</strong>
-        <span>ваших заказов</span>
+        <span>заказов</span>
       </div>
     </section>
+
+    % if saved:
+      <div class="page-notice page-notice--success">Заказ добавлен. Можно сразу внести следующий.</div>
+    % end
 
     <section class="orders-layout">
       <form class="order-form" action="/orders" method="post" novalidate>
         <div class="section-title">
-          <span>Новый объект данных</span>
+          <span>Новая запись</span>
           <h2>Добавить заказ</h2>
         </div>
 
@@ -94,6 +99,7 @@
               type="date"
               name="date"
               value="{{form.get('date', '')}}"
+              max="{{today}}"
               required
             />
             % if errors.get("date"):
@@ -118,11 +124,14 @@
 
         % if errors:
           <div class="form-alert">
-            Проверьте поля формы. Данные не сброшены, исправьте ошибки и отправьте заказ ещё раз.
+            Проверьте поля формы. Данные не сброшены, исправьте ошибки и отправьте заказ еще раз.
           </div>
         % end
 
-        <button class="submit-button" type="submit">Разместить заказ</button>
+        <div class="form-actions">
+          <button class="submit-button" type="submit">Разместить заказ</button>
+          <button class="ghost-button" type="reset">Очистить</button>
+        </div>
       </form>
 
       <section class="orders-list" aria-label="Список оформленных заказов">
@@ -131,10 +140,17 @@
           <h2>Перечень заказов</h2>
         </div>
 
+        <div class="list-toolbar">
+          <label class="search-field">
+            <span>Поиск</span>
+            <input type="search" id="orders-search" placeholder="Номер, автор, описание или телефон" />
+          </label>
+        </div>
+
         % if orders:
-          <div class="order-cards">
+          <div class="order-cards" id="orders-list">
             % for order in orders:
-              <article class="order-card">
+              <article class="order-card" data-search="{{order['number']}} {{order['author']}} {{order['text']}} {{order['phone']}}">
                 <div class="order-card__top">
                   <span class="order-number">{{order["number"]}}</span>
                   <time datetime="{{order['date']}}">{{order["date"]}}</time>
@@ -145,11 +161,36 @@
               </article>
             % end
           </div>
+          <div class="empty-orders is-hidden" id="orders-empty-search">По такому запросу заказов не найдено.</div>
         % else:
-          <div class="empty-orders">Заказов пока нет. Добавьте первый объект через форму.</div>
+          <div class="empty-orders">Заказов пока нет. Добавьте первый заказ через форму.</div>
         % end
       </section>
     </section>
   </main>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const search = document.getElementById("orders-search");
+      const cards = Array.from(document.querySelectorAll(".order-card"));
+      const empty = document.getElementById("orders-empty-search");
+
+      if (!search) return;
+
+      search.addEventListener("input", () => {
+        const query = search.value.trim().toLowerCase();
+        let visibleCount = 0;
+
+        cards.forEach((card) => {
+          const text = card.dataset.search.toLowerCase();
+          const visible = text.includes(query);
+          card.classList.toggle("is-hidden", !visible);
+          if (visible) visibleCount += 1;
+        });
+
+        if (empty) empty.classList.toggle("is-hidden", visibleCount !== 0);
+      });
+    });
+  </script>
 </body>
 </html>

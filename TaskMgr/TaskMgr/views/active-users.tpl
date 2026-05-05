@@ -29,9 +29,8 @@
         <p class="users-eyebrow">Вариант 6</p>
         <h1>Активные пользователи</h1>
         <p>
-          Список загружается Python-кодом из файла существующих пользователей.
-          Активные участники выбираются автоматически по рейтингу: события,
-          комментарии, заметки, участие в группах и свежесть активности.
+          Пользователь попадает в список, если набирает достаточно баллов активности.
+          Рейтинг считается по событиям, комментариям, заметкам, группам и дате последней активности.
         </p>
       </div>
       <div class="users-count">
@@ -40,10 +39,14 @@
       </div>
     </section>
 
+    % if saved:
+      <div class="page-notice page-notice--success">Пользователь добавлен. Если рейтинг высокий, он появится в списке активных.</div>
+    % end
+
     <section class="users-layout">
       <form class="user-form" action="/active-users" method="post" novalidate>
         <div class="section-title">
-          <span>Новый объект данных</span>
+          <span>Новая запись</span>
           <h2>Добавить пользователя</h2>
         </div>
 
@@ -81,6 +84,7 @@
               type="date"
               name="active_date"
               value="{{form.get('active_date', '')}}"
+              max="{{today}}"
               required
             />
             % if errors.get("active_date"):
@@ -106,13 +110,7 @@
         <div class="metric-grid">
           <label class="field">
             <span>Создано событий</span>
-            <input
-              type="number"
-              name="events_created"
-              min="0"
-              value="{{form.get('events_created', '0')}}"
-              required
-            />
+            <input type="number" name="events_created" min="0" value="{{form.get('events_created', '0')}}" required />
             % if errors.get("events_created"):
               <small class="field-error">{{errors["events_created"]}}</small>
             % end
@@ -120,13 +118,7 @@
 
           <label class="field">
             <span>Комментариев</span>
-            <input
-              type="number"
-              name="comments_count"
-              min="0"
-              value="{{form.get('comments_count', '0')}}"
-              required
-            />
+            <input type="number" name="comments_count" min="0" value="{{form.get('comments_count', '0')}}" required />
             % if errors.get("comments_count"):
               <small class="field-error">{{errors["comments_count"]}}</small>
             % end
@@ -134,13 +126,7 @@
 
           <label class="field">
             <span>Заметок</span>
-            <input
-              type="number"
-              name="notes_count"
-              min="0"
-              value="{{form.get('notes_count', '0')}}"
-              required
-            />
+            <input type="number" name="notes_count" min="0" value="{{form.get('notes_count', '0')}}" required />
             % if errors.get("notes_count"):
               <small class="field-error">{{errors["notes_count"]}}</small>
             % end
@@ -148,17 +134,16 @@
 
           <label class="field">
             <span>Групп</span>
-            <input
-              type="number"
-              name="groups_joined"
-              min="0"
-              value="{{form.get('groups_joined', '0')}}"
-              required
-            />
+            <input type="number" name="groups_joined" min="0" value="{{form.get('groups_joined', '0')}}" required />
             % if errors.get("groups_joined"):
               <small class="field-error">{{errors["groups_joined"]}}</small>
             % end
           </label>
+        </div>
+
+        <div class="score-preview" aria-live="polite">
+          <span>Предварительный рейтинг</span>
+          <strong id="score-preview">0</strong>
         </div>
 
         % if errors:
@@ -167,19 +152,29 @@
           </div>
         % end
 
-        <button class="submit-button" type="submit">Добавить пользователя</button>
+        <div class="form-actions">
+          <button class="submit-button" type="submit">Добавить пользователя</button>
+          <button class="ghost-button" type="reset">Очистить</button>
+        </div>
       </form>
 
       <section class="users-list" aria-label="Список активных пользователей">
         <div class="section-title">
-          <span>Сортировка: рейтинг активности сверху</span>
+          <span>Сортировка: рейтинг сверху</span>
           <h2>Перечень пользователей</h2>
         </div>
 
+        <div class="list-toolbar">
+          <label class="search-field">
+            <span>Поиск</span>
+            <input type="search" id="users-search" placeholder="Ник, описание, телефон или метрика" />
+          </label>
+        </div>
+
         % if users:
-          <div class="user-cards">
+          <div class="user-cards" id="users-list">
             % for user in users:
-              <article class="user-card">
+              <article class="user-card" data-search="{{user['nick']}} {{user['description']}} {{user['phone']}} {{user.get('events_created', 0)}} {{user.get('comments_count', 0)}} {{user.get('notes_count', 0)}} {{user.get('groups_joined', 0)}}">
                 <div class="user-card__top">
                   <span class="user-nick">@{{user["nick"]}}</span>
                   <time datetime="{{user['active_date']}}">{{user["active_date"]}}</time>
@@ -199,11 +194,63 @@
               </article>
             % end
           </div>
+          <div class="empty-users is-hidden" id="users-empty-search">По такому запросу пользователей не найдено.</div>
         % else:
           <div class="empty-users">Пока нет пользователей, которые прошли порог активности.</div>
         % end
       </section>
     </section>
   </main>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const search = document.getElementById("users-search");
+      const cards = Array.from(document.querySelectorAll(".user-card"));
+      const empty = document.getElementById("users-empty-search");
+      const form = document.querySelector(".user-form");
+      const preview = document.getElementById("score-preview");
+
+      if (search) {
+        search.addEventListener("input", () => {
+          const query = search.value.trim().toLowerCase();
+          let visibleCount = 0;
+
+          cards.forEach((card) => {
+            const text = card.dataset.search.toLowerCase();
+            const visible = text.includes(query);
+            card.classList.toggle("is-hidden", !visible);
+            if (visible) visibleCount += 1;
+          });
+
+          if (empty) empty.classList.toggle("is-hidden", visibleCount !== 0);
+        });
+      }
+
+      function metricValue(name) {
+        const input = form?.elements[name];
+        const value = Number.parseInt(input?.value || "0", 10);
+        return Number.isFinite(value) && value > 0 ? value : 0;
+      }
+
+      function updateScorePreview() {
+        if (!form || !preview) return;
+
+        let score = 0;
+        score += metricValue("events_created") * 4;
+        score += metricValue("comments_count") * 2;
+        score += metricValue("notes_count");
+        score += metricValue("groups_joined") * 3;
+
+        const dateValue = form.elements.active_date.value;
+        if (dateValue && dateValue <= "{{today}}") score += 2;
+
+        preview.textContent = score;
+      }
+
+      form?.addEventListener("input", updateScorePreview);
+      form?.addEventListener("reset", () => setTimeout(updateScorePreview, 0));
+      updateScorePreview();
+    });
+  </script>
 </body>
 </html>

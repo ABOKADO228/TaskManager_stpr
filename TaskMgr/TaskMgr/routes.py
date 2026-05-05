@@ -1,5 +1,6 @@
 # Маршруты и представления Bottle-приложения.
 
+from datetime import date
 from urllib.parse import unquote
 
 from bottle import redirect, request, route, view
@@ -89,6 +90,8 @@ def orders_page():
         "errors": {},
         "form": empty_form(),
         "current_user": current_user,
+        "today": date.today().isoformat(),
+        "saved": request.query.get("saved") == "1",
     }
 
 
@@ -122,12 +125,14 @@ def add_order():
             "errors": errors,
             "form": form,
             "current_user": current_user,
+            "today": date.today().isoformat(),
+            "saved": False,
         }
 
     new_order = build_order(form, current_user)
     all_orders.append(new_order)
     save_orders(all_orders)
-    redirect("/orders")
+    redirect("/orders?saved=1")
 
 
 # Отображает страницу активных пользователей.
@@ -141,6 +146,8 @@ def active_users_page():
         "users": load_active_users(),
         "errors": {},
         "form": empty_user_form(),
+        "today": date.today().isoformat(),
+        "saved": request.query.get("saved") == "1",
     }
 
 
@@ -170,9 +177,11 @@ def add_active_user():
             "users": load_active_users(),
             "errors": errors,
             "form": form,
+            "today": date.today().isoformat(),
+            "saved": False,
         }
 
     new_user = build_active_user(form)
     all_users.append(new_user)
     save_active_users(all_users)
-    redirect("/active-users")
+    redirect("/active-users?saved=1")

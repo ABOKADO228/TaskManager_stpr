@@ -4,6 +4,40 @@
   gap: 14px;
 }
 
+.list-toolbar {
+  padding: 12px;
+  border-radius: 8px;
+  background: #22252c;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.search-field {
+  display: grid;
+  gap: 7px;
+}
+
+.search-field span {
+  color: #c8ccd7;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.search-field input {
+  width: 100%;
+  min-height: 42px;
+  padding: 0 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  outline: none;
+  background: #17191e;
+  color: #f6f7fb;
+}
+
+.search-field input:focus {
+  border-color: #8fb3ff;
+  box-shadow: 0 0 0 3px rgba(78, 108, 255, 0.16);
+}
+
 .user-cards {
   display: grid;
   gap: 12px;
@@ -90,4 +124,8 @@
 
 .empty-users {
   color: #aeb5c5;
+}
+
+.is-hidden {
+  display: none;
 }
