@@ -26,7 +26,6 @@ from order_service import (
 # @returns словарь текущего пользователя или None, если пользователь не авторизован.
 # @throws не выбрасывает исключения напрямую.
 # @note Bottle не видит localStorage, поэтому для серверной защиты /orders используется cookie taskmgr_user_id.
-# FIXME для production cookie должна быть подписанной, а учетные записи нужно хранить на сервере.
 def get_current_user():
     user_id = request.get_cookie("taskmgr_user_id")
     if not user_id:
@@ -34,6 +33,7 @@ def get_current_user():
 
     username = unquote(request.get_cookie("taskmgr_username") or "")
     display_name = unquote(request.get_cookie("taskmgr_display_name") or username)
+
     return {
         "id": unquote(user_id),
         "username": username,
@@ -45,47 +45,47 @@ def get_current_user():
 # @returns словарь контекста для шаблона views/index.tpl.
 # @throws не выбрасывает исключения напрямую.
 # @note страница содержит навигацию к входу, заказам и активным пользователям.
-@route('/')
-@view('index')
+@route("/")
+@view("index")
 def home():
-    return dict()
+    return {}
 
 
 # Отображает главное рабочее пространство пользователя.
 # @returns словарь контекста для шаблона views/main.tpl.
 # @throws не выбрасывает исключения напрямую.
 # @note доступ дополнительно проверяется клиентским JavaScript через localStorage.
-# FIXME проверку авторизации нужно перенести на серверную сторону.
-@route('/main')
-@view('./main')
+@route("/main")
+@view("./main")
 def main():
-    return dict()
+    return {}
 
 
 # Отображает страницу входа и регистрации.
 # @returns словарь контекста для шаблона views/reg-auth.tpl.
 # @throws не выбрасывает исключения напрямую.
 # @note в текущем прототипе регистрация и вход реализованы на клиенте.
-# FIXME пароли и сессии нужно перенести на backend перед реальным использованием.
-@route('/reg-auth')
-@view('./reg-auth')
+@route("/reg-auth")
+@view("./reg-auth")
 def reg_auth():
-    return dict()
+    return {}
 
 
 # Отображает страницу оформленных заказов с чистой формой добавления.
 # @returns контекст шаблона views/orders.tpl: список заказов, ошибки и состояние формы.
 # @throws не выбрасывает исключения напрямую; чтение JSON защищено в load_orders.
-# @note заказы загружаются из файла Python-кодом и сортируются по дате.
-@route('/orders', method='GET')
-@view('orders')
+# @note заказы показываются только текущему пользователю по owner_id.
+@route("/orders", method="GET")
+@view("orders")
 def orders_page():
     current_user = get_current_user()
     if not current_user:
-        redirect('/reg-auth?next=/orders')
+        redirect("/reg-auth?next=/orders")
+
+    user_orders = load_orders_for_user(current_user["id"])
 
     return {
-        "orders": load_orders_for_user(current_user["id"]),
+        "orders": user_orders,
         "errors": {},
         "form": empty_form(),
         "current_user": current_user,
@@ -96,12 +96,12 @@ def orders_page():
 # @returns контекст страницы с ошибками либо redirect на /orders при успехе.
 # @throws OSError если save_orders не сможет записать JSON-файл.
 # @note redirect после успешного POST очищает форму и защищает от повторной отправки.
-@route('/orders', method='POST')
-@view('orders')
+@route("/orders", method="POST")
+@view("orders")
 def add_order():
     current_user = get_current_user()
     if not current_user:
-        redirect('/reg-auth?next=/orders')
+        redirect("/reg-auth?next=/orders")
 
     # Копируем только ожидаемые поля, чтобы лишние данные не попали в JSON.
     form = {
@@ -112,7 +112,7 @@ def add_order():
         "phone": (request.forms.getunicode("phone") or "").strip(),
     }
 
-    orders = load_orders()
+    all_orders = load_orders()
     user_orders = load_orders_for_user(current_user["id"])
     errors = validate_order(form, user_orders)
 
@@ -124,17 +124,18 @@ def add_order():
             "current_user": current_user,
         }
 
-    orders.append(build_order(form, current_user))
-    save_orders(orders)
-    redirect('/orders')
+    new_order = build_order(form, current_user)
+    all_orders.append(new_order)
+    save_orders(all_orders)
+    redirect("/orders")
 
 
 # Отображает страницу активных пользователей.
 # @returns контекст шаблона views/active-users.tpl: список пользователей, ошибки и форма.
 # @throws не выбрасывает исключения напрямую; чтение JSON защищено в load_active_users.
 # @note это страница варианта 6 по заданию.
-@route('/active-users', method='GET')
-@view('active-users')
+@route("/active-users", method="GET")
+@view("active-users")
 def active_users_page():
     return {
         "users": load_active_users(),
@@ -147,10 +148,9 @@ def active_users_page():
 # @returns контекст страницы с ошибками либо redirect на /active-users при успехе.
 # @throws OSError если save_active_users не сможет записать JSON-файл.
 # @note серверная валидация работает даже при отключенной HTML5-валидации браузера.
-@route('/active-users', method='POST')
-@view('active-users')
+@route("/active-users", method="POST")
+@view("active-users")
 def add_active_user():
-    # Копируем только ожидаемые поля, чтобы структура JSON оставалась предсказуемой.
     form = {
         "nick": (request.forms.getunicode("nick") or "").strip(),
         "description": (request.forms.getunicode("description") or "").strip(),
@@ -172,6 +172,7 @@ def add_active_user():
             "form": form,
         }
 
-    all_users.append(build_active_user(form))
+    new_user = build_active_user(form)
+    all_users.append(new_user)
     save_active_users(all_users)
-    redirect('/active-users')
+    redirect("/active-users")

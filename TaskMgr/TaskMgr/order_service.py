@@ -1,8 +1,3 @@
-# Модуль содержит бизнес-логику страницы "Оформленные заказы".
-# Функции отделены от Bottle, чтобы их можно было проверять unit-тестами.
-
-from __future__ import annotations
-
 import json
 import re
 from datetime import date, datetime
@@ -12,8 +7,8 @@ from pathlib import Path
 # Формат даты, который отправляет браузерное поле input[type="date"].
 DATE_FORMAT = "%Y-%m-%d"
 
-# Регулярное выражение допускает российский телефон с пробелами, скобками
-# и дефисами. Точное количество цифр проверяется отдельно.
+# Регулярное выражение допускает российский телефон с пробелами, скобками и дефисами.
+# Точное количество цифр проверяется отдельно.
 PHONE_PATTERN = re.compile(r"^\+?[\d\s()\-]{10,20}$")
 
 
@@ -21,7 +16,7 @@ PHONE_PATTERN = re.compile(r"^\+?[\d\s()\-]{10,20}$")
 # @returns путь к файлу data/orders.json.
 # @throws не выбрасывает исключения напрямую.
 # @note путь строится относительно этого файла, а не текущей рабочей папки.
-def default_orders_path() -> Path:
+def default_orders_path():
     return Path(__file__).resolve().parent / "data" / "orders.json"
 
 
@@ -29,7 +24,7 @@ def default_orders_path() -> Path:
 # @returns словарь с пустыми значениями для всех полей формы заказа.
 # @throws не выбрасывает исключения.
 # @note используется при первом открытии страницы и после успешного redirect.
-def empty_form() -> dict[str, str]:
+def empty_form():
     return {
         "number": "",
         "author": "",
@@ -44,22 +39,22 @@ def empty_form() -> dict[str, str]:
 # @returns список заказов, отсортированный по дате от новых к старым.
 # @throws не выбрасывает исключения наружу; ошибки чтения и JSON обрабатываются внутри.
 # @note пустой список возвращается, если файл отсутствует или поврежден.
-# FIXME для production нужно заменить JSON на БД и логировать ошибки чтения.
-def load_orders(path: Path | None = None) -> list[dict[str, str]]:
+def load_orders(path=None):
     orders_path = path or default_orders_path()
+
     if not orders_path.exists():
         return []
 
     try:
         with orders_path.open("r", encoding="utf-8") as file:
-            loaded = json.load(file)
+            orders = json.load(file)
     except (OSError, json.JSONDecodeError):
         return []
 
-    if not isinstance(loaded, list):
+    if not isinstance(orders, list):
         return []
 
-    return sorted(loaded, key=lambda item: item.get("date", ""), reverse=True)
+    return sorted(orders, key=lambda order: order.get("date", ""), reverse=True)
 
 
 # Возвращает только заказы указанного пользователя.
@@ -68,8 +63,14 @@ def load_orders(path: Path | None = None) -> list[dict[str, str]]:
 # @returns список заказов, у которых owner_id совпадает с user_id.
 # @throws не выбрасывает исключения напрямую.
 # @note заказы без owner_id считаются старыми общими данными и не показываются в личном кабинете.
-def filter_orders_for_user(orders: list[dict[str, str]], user_id: str) -> list[dict[str, str]]:
-    return [order for order in orders if order.get("owner_id") == user_id]
+def filter_orders_for_user(orders, user_id):
+    result = []
+
+    for order in orders:
+        if order.get("owner_id") == user_id:
+            result.append(order)
+
+    return result
 
 
 # Загружает личные заказы пользователя из JSON-файла.
@@ -77,9 +78,9 @@ def filter_orders_for_user(orders: list[dict[str, str]], user_id: str) -> list[d
 # @param path путь к JSON-файлу; если None, используется data/orders.json.
 # @returns список личных заказов пользователя, отсортированный по дате от новых к старым.
 # @throws не выбрасывает исключения наружу; ошибки чтения обрабатываются в load_orders.
-# @note функция нужна маршрутам, чтобы не дублировать фильтрацию в контроллере.
-def load_orders_for_user(user_id: str, path: Path | None = None) -> list[dict[str, str]]:
-    return filter_orders_for_user(load_orders(path), user_id)
+def load_orders_for_user(user_id, path=None):
+    orders = load_orders(path)
+    return filter_orders_for_user(orders, user_id)
 
 
 # Сохраняет оформленные заказы в JSON-файл.
@@ -88,7 +89,7 @@ def load_orders_for_user(user_id: str, path: Path | None = None) -> list[dict[st
 # @returns None.
 # @throws OSError если папку или файл не удалось создать/записать.
 # @note ensure_ascii=False нужен, чтобы русские строки оставались читаемыми.
-def save_orders(orders: list[dict[str, str]], path: Path | None = None) -> None:
+def save_orders(orders, path=None):
     orders_path = path or default_orders_path()
     orders_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -101,13 +102,13 @@ def save_orders(orders: list[dict[str, str]], path: Path | None = None) -> None:
 # @returns True, если дата корректна и не позже сегодняшнего дня; иначе False.
 # @throws не выбрасывает исключения; ValueError при парсинге даты перехватывается.
 # @note будущие даты запрещены, потому что список хранит уже оформленные заказы.
-def is_valid_order_date(value: str) -> bool:
+def is_valid_order_date(value):
     try:
-        parsed = datetime.strptime(value, DATE_FORMAT).date()
+        order_date = datetime.strptime(value, DATE_FORMAT).date()
     except ValueError:
         return False
 
-    return parsed <= date.today()
+    return order_date <= date.today()
 
 
 # Проверяет телефон заказа.
@@ -115,12 +116,16 @@ def is_valid_order_date(value: str) -> bool:
 # @returns True, если телефон содержит 11 цифр и начинается с 7 или 8; иначе False.
 # @throws не выбрасывает исключения.
 # @note формат допускает пробелы, скобки и дефисы, но хранится исходная строка.
-def is_valid_phone(value: str) -> bool:
+def is_valid_phone(value):
     if not PHONE_PATTERN.match(value):
         return False
 
     digits = re.sub(r"\D", "", value)
-    return len(digits) == 11 and digits[0] in {"7", "8"}
+
+    if len(digits) != 11:
+        return False
+
+    return digits[0] == "7" or digits[0] == "8"
 
 
 # Проверяет форму добавления оформленного заказа.
@@ -129,8 +134,8 @@ def is_valid_phone(value: str) -> bool:
 # @returns словарь ошибок вида {имя_поля: текст_ошибки}; пустой словарь означает успех.
 # @throws KeyError если в form отсутствует обязательный ключ.
 # @note имена ключей ошибок совпадают с именами HTML-полей для вывода рядом с input.
-def validate_order(form: dict[str, str], existing_orders: list[dict[str, str]]) -> dict[str, str]:
-    errors: dict[str, str] = {}
+def validate_order(form, existing_orders):
+    errors = {}
 
     number = form["number"].strip()
     author = form["author"].strip()
@@ -141,29 +146,33 @@ def validate_order(form: dict[str, str], existing_orders: list[dict[str, str]]) 
     if not number:
         errors["number"] = "Введите номер заказа."
     elif not re.match(r"^[A-Za-zА-Яа-яЁё0-9\-]{3,20}$", number):
-        errors["number"] = "Номер должен содержать 3-20 символов: буквы, цифры или дефис."
-    elif any(order.get("number", "").lower() == number.lower() for order in existing_orders):
-        errors["number"] = "Заказ с таким номером уже есть в списке."
+        errors["number"] = "Номер должен быть от 3 до 20 символов."
+    else:
+        for order in existing_orders:
+            old_number = order.get("number", "").lower()
+            if old_number == number.lower():
+                errors["number"] = "Заказ с таким номером уже есть."
+                break
 
     if not author:
-        errors["author"] = "Введите имя автора или клиента."
+        errors["author"] = "Введите автора или клиента."
     elif len(author) < 2:
-        errors["author"] = "Имя должно быть не короче 2 символов."
+        errors["author"] = "Имя слишком короткое."
 
     if not text:
-        errors["text"] = "Добавьте описание заказа."
+        errors["text"] = "Введите описание заказа."
     elif len(text) < 10:
-        errors["text"] = "Описание должно быть не короче 10 символов."
+        errors["text"] = "Описание слишком короткое."
 
     if not order_date:
         errors["date"] = "Укажите дату заказа."
     elif not is_valid_order_date(order_date):
-        errors["date"] = "Дата должна быть в формате ГГГГ-ММ-ДД и не позже сегодняшнего дня."
+        errors["date"] = "Дата должна быть в формате YYYY-MM-DD и не в будущем."
 
     if not phone:
         errors["phone"] = "Укажите телефон."
     elif not is_valid_phone(phone):
-        errors["phone"] = "Телефон должен быть в формате +7XXXXXXXXXX или 8XXXXXXXXXX."
+        errors["phone"] = "Телефон должен быть похож на +7XXXXXXXXXX или 8XXXXXXXXXX."
 
     return errors
 
@@ -174,13 +183,16 @@ def validate_order(form: dict[str, str], existing_orders: list[dict[str, str]]) 
 # @returns словарь заказа для сохранения в JSON.
 # @throws KeyError если в form отсутствует обязательный ключ.
 # @note функцию нужно вызывать только после validate_order, иначе в JSON могут попасть непроверенные данные.
-def build_order(form: dict[str, str], owner: dict[str, str] | None = None) -> dict[str, str]:
+def build_order(form, owner=None):
+    if owner is None:
+        owner = {}
+
     return {
         "number": form["number"].strip(),
         "author": form["author"].strip(),
         "text": form["text"].strip(),
         "date": form["date"].strip(),
         "phone": form["phone"].strip(),
-        "owner_id": (owner or {}).get("id", ""),
-        "owner_name": (owner or {}).get("display_name", ""),
+        "owner_id": owner.get("id", ""),
+        "owner_name": owner.get("display_name", ""),
     }
