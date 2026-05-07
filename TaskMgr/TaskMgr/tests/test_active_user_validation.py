@@ -13,6 +13,10 @@ from active_user_service import (
 
 
 class ActiveUserValidationTests(unittest.TestCase):
+    # Создает корректный набор данных формы активного пользователя для тестов.
+    # @returns словарь с валидными значениями всех обязательных полей пользователя.
+    # @throws не выбрасывает исключения.
+    # @note дата активности берется от текущего дня, чтобы тесты не устаревали.
     def valid_form(self):
         return {
             "nick": "active_user",
@@ -32,6 +36,10 @@ class ActiveUserValidationTests(unittest.TestCase):
     def test_valid_activity_date(self):
         self.assertTrue(is_valid_activity_date(date.today().strftime("%Y-%m-%d")))
 
+    # Проверяет, что дата активности позже текущего дня отклоняется валидатором.
+    # @returns None.
+    # @throws AssertionError если будущая дата ошибочно пройдет проверку.
+    # @note дата строится динамически от date.today().
     def test_future_activity_date_is_invalid(self):
         tomorrow = date.today() + timedelta(days=1)
 
@@ -73,11 +81,19 @@ class ActiveUserValidationTests(unittest.TestCase):
 
         self.assertEqual(calculate_activity_score(user), 23)
 
+    # Проверяет, что полностью корректная форма активного пользователя не возвращает ошибок.
+    # @returns None.
+    # @throws AssertionError если валидная форма будет отклонена.
+    # @note используется базовая форма valid_form().
     def test_valid_active_user_form_has_no_errors(self):
         errors = validate_active_user(self.valid_form(), [])
 
         self.assertEqual(errors, {})
 
+    # Проверяет серверную ошибку формы активного пользователя при будущей дате.
+    # @returns None.
+    # @throws AssertionError если поле active_date не попадет в ошибки.
+    # @note дополняет прямой тест is_valid_activity_date().
     def test_active_user_form_rejects_future_date(self):
         form = self.valid_form()
         form["active_date"] = (date.today() + timedelta(days=1)).strftime("%Y-%m-%d")
@@ -86,6 +102,10 @@ class ActiveUserValidationTests(unittest.TestCase):
 
         self.assertIn("active_date", errors)
 
+    # Проверяет, что ник активного пользователя должен быть уникальным.
+    # @returns None.
+    # @throws AssertionError если дубликат ника не будет найден.
+    # @note сравнение ника выполняется без учета регистра.
     def test_active_user_form_rejects_duplicate_nick(self):
         form = self.valid_form()
 
@@ -93,6 +113,10 @@ class ActiveUserValidationTests(unittest.TestCase):
 
         self.assertIn("nick", errors)
 
+    # Проверяет, что метрики активности не могут быть отрицательными.
+    # @returns None.
+    # @throws AssertionError если отрицательная метрика пройдет проверку.
+    # @note ошибка должна появиться у поля events_created.
     def test_active_user_form_rejects_negative_metric(self):
         form = self.valid_form()
         form["events_created"] = "-1"
@@ -101,6 +125,10 @@ class ActiveUserValidationTests(unittest.TestCase):
 
         self.assertIn("events_created", errors)
 
+    # Проверяет, что обязательные поля активного пользователя нельзя отправить пустыми.
+    # @returns None.
+    # @throws AssertionError если любое обязательное поле не получит ошибку.
+    # @note сценарий имитирует отправку пустой HTML-формы.
     def test_active_user_form_rejects_required_empty_fields(self):
         form = {
             "nick": "",
@@ -121,6 +149,10 @@ class ActiveUserValidationTests(unittest.TestCase):
         self.assertIn("phone", errors)
         self.assertIn("events_created", errors)
 
+    # Проверяет несколько независимых ошибок формы активного пользователя за один проход.
+    # @returns None.
+    # @throws AssertionError если ник, описание или телефон ошибочно пройдут проверку.
+    # @note тест покрывает ветки формата ника, длины описания и формата телефона.
     def test_active_user_form_rejects_bad_nick_short_description_and_phone(self):
         form = self.valid_form()
         form["nick"] = "no spaces"
@@ -133,6 +165,10 @@ class ActiveUserValidationTests(unittest.TestCase):
         self.assertIn("description", errors)
         self.assertIn("phone", errors)
 
+    # Проверяет, что метрики активности должны быть целыми числами.
+    # @returns None.
+    # @throws AssertionError если нечисловая метрика пройдет проверку.
+    # @note ошибка должна появиться у поля comments_count.
     def test_active_user_form_rejects_non_numeric_metric(self):
         form = self.valid_form()
         form["comments_count"] = "many"
@@ -141,6 +177,10 @@ class ActiveUserValidationTests(unittest.TestCase):
 
         self.assertIn("comments_count", errors)
 
+    # Проверяет сборку объекта активного пользователя из формы.
+    # @returns None.
+    # @throws AssertionError если текст не обрежется или метрика не станет числом.
+    # @note build_active_user вызывается после успешной validate_active_user.
     def test_build_active_user_trims_text_and_parses_metrics(self):
         form = self.valid_form()
         form["nick"] = "  active_user  "

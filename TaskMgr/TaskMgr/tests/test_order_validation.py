@@ -7,6 +7,10 @@ from order_service import build_order, filter_orders_for_user, is_valid_order_da
 
 
 class OrderValidationTests(unittest.TestCase):
+    # Создает корректный набор данных формы заказа для повторного использования в тестах.
+    # @returns словарь с валидными значениями всех обязательных полей заказа.
+    # @throws не выбрасывает исключения.
+    # @note дата берется от текущего дня, чтобы тесты не устаревали со временем.
     def valid_form(self):
         return {
             "number": "ORD-10",
@@ -23,6 +27,10 @@ class OrderValidationTests(unittest.TestCase):
     def test_valid_order_date(self):
         self.assertTrue(is_valid_order_date(date.today().strftime("%Y-%m-%d")))
 
+    # Проверяет, что дата позже текущего дня отклоняется валидатором заказа.
+    # @returns None.
+    # @throws AssertionError если будущая дата ошибочно пройдет проверку.
+    # @note дата строится динамически от date.today().
     def test_future_order_date_is_invalid(self):
         tomorrow = date.today() + timedelta(days=1)
 
@@ -84,11 +92,19 @@ class OrderValidationTests(unittest.TestCase):
         self.assertEqual(order["owner_name"], "Администратор")
 
 
+    # Проверяет, что полностью корректная форма заказа не возвращает ошибок.
+    # @returns None.
+    # @throws AssertionError если валидная форма будет отклонена.
+    # @note используется базовая форма valid_form().
     def test_valid_order_form_has_no_errors(self):
         errors = validate_order(self.valid_form(), [])
 
         self.assertEqual(errors, {})
 
+    # Проверяет серверную ошибку формы заказа при выборе будущей даты.
+    # @returns None.
+    # @throws AssertionError если поле date не попадет в ошибки.
+    # @note дополняет прямой тест is_valid_order_date().
     def test_order_form_rejects_future_date(self):
         form = self.valid_form()
         form["date"] = (date.today() + timedelta(days=1)).strftime("%Y-%m-%d")
@@ -97,6 +113,10 @@ class OrderValidationTests(unittest.TestCase):
 
         self.assertIn("date", errors)
 
+    # Проверяет, что номер заказа должен быть уникальным для текущего пользователя.
+    # @returns None.
+    # @throws AssertionError если дубликат номера не будет найден.
+    # @note сравнение номера выполняется без учета регистра.
     def test_order_form_rejects_duplicate_number(self):
         form = self.valid_form()
 
@@ -104,6 +124,10 @@ class OrderValidationTests(unittest.TestCase):
 
         self.assertIn("number", errors)
 
+    # Проверяет, что слишком короткое описание заказа отклоняется формой.
+    # @returns None.
+    # @throws AssertionError если поле text не попадет в ошибки.
+    # @note минимальная длина описания задается в order_service.validate_order.
     def test_order_form_rejects_short_text(self):
         form = self.valid_form()
         form["text"] = "short"
@@ -112,6 +136,10 @@ class OrderValidationTests(unittest.TestCase):
 
         self.assertIn("text", errors)
 
+    # Проверяет, что обязательные поля заказа нельзя отправить пустыми.
+    # @returns None.
+    # @throws AssertionError если любое обязательное поле не получит ошибку.
+    # @note сценарий имитирует отправку пустой HTML-формы.
     def test_order_form_rejects_required_empty_fields(self):
         form = {
             "number": "",
@@ -129,6 +157,10 @@ class OrderValidationTests(unittest.TestCase):
         self.assertIn("date", errors)
         self.assertIn("phone", errors)
 
+    # Проверяет несколько независимых ошибок формы заказа за один проход.
+    # @returns None.
+    # @throws AssertionError если номер, автор или телефон ошибочно пройдут проверку.
+    # @note тест покрывает ветки формата номера, длины автора и формата телефона.
     def test_order_form_rejects_bad_number_short_author_and_phone(self):
         form = self.valid_form()
         form["number"] = "bad number"
@@ -141,6 +173,10 @@ class OrderValidationTests(unittest.TestCase):
         self.assertIn("author", errors)
         self.assertIn("phone", errors)
 
+    # Проверяет сборку заказа без данных владельца.
+    # @returns None.
+    # @throws AssertionError если owner_id или owner_name не будут пустыми строками.
+    # @note используется для совместимости с вызовом build_order(form).
     def test_build_order_without_owner_uses_empty_owner_fields(self):
         order = build_order(self.valid_form())
 
