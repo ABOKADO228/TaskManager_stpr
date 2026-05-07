@@ -13,6 +13,9 @@
 // FIXME
 // При переносе на backend большую часть функций чтения/записи нужно заменить
 // HTTP-запросами к API.
+//
+// addEventListener подписывает страницу на событие DOMContentLoaded, чтобы
+// скрипт начал работать только после создания всех HTML-элементов.
 document.addEventListener("DOMContentLoaded", () => {
   const SESSION_KEY = "taskmgr_session";
   const GROUPS_KEY = "taskmgr_groups";
@@ -261,6 +264,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // @throws TypeError
   // Может возникнуть, если элемент с таким id не найден.
   function openModal(id) {
+    // getElementById ищет DOM-элемент по значению атрибута id.
     document.getElementById(id).hidden = false;
   }
 
@@ -714,17 +718,21 @@ document.addEventListener("DOMContentLoaded", () => {
   renderProfile();
   renderGroup();
 
+  // getElementById получает конкретную кнопку по id, а addEventListener
+  // назначает обработчик клика по этой кнопке.
   document.getElementById("logout-button").addEventListener("click", () => {
     clearAuth();
     window.location.replace("/");
   });
 
+  // addEventListener с событием change реагирует на выбор другой группы.
   document.getElementById("group-switch-select").addEventListener("change", (event) => {
     selectedEventId = null;
     updateSession({ currentGroupId: event.target.value || null });
     renderGroup();
   });
 
+  // addEventListener с событием input сохраняет заметки при каждом изменении поля.
   document.getElementById("notes-input").addEventListener("input", (event) => {
     localStorage.setItem(`${NOTES_PREFIX}${getSession().userId}`, event.target.value);
   });
