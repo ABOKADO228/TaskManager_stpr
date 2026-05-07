@@ -163,6 +163,8 @@ def validate_order(form, existing_orders):
         errors["text"] = "Введите описание заказа."
     elif len(text) < 10:
         errors["text"] = "Описание слишком короткое."
+    elif not is_valid_order_text(text):
+        errors["text"] = "Описание должно быть осмысленным: минимум 2 слова, 5 букв и разные символы."
 
     if not order_date:
         errors["date"] = "Укажите дату заказа."
@@ -196,3 +198,32 @@ def build_order(form, owner=None):
         "owner_id": owner.get("id", ""),
         "owner_name": owner.get("display_name", ""),
     }
+
+
+# Проверяет, что описание заказа похоже на осмысленный текст.
+# @param value описание заказа из формы.
+# @returns True, если описание содержит достаточно букв, слов и разных символов.
+# @throws не выбрасывает исключения.
+# @note защита от строк вроде "1111111111", "----------", "аааааааааа" или "test".
+def is_valid_order_text(value):
+    text = value.strip()
+
+    if len(text) < 10:
+        return False
+
+    letters = re.findall(r"[A-Za-zА-Яа-яЁё]", text)
+
+    if len(letters) < 5:
+        return False
+
+    words = re.findall(r"[A-Za-zА-Яа-яЁё]{2,}", text)
+
+    if len(words) < 2:
+        return False
+
+    unique_chars = set(text.lower())
+
+    if len(unique_chars) < 5:
+        return False
+
+    return True
