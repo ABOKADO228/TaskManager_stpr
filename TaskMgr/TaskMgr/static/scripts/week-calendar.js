@@ -702,6 +702,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // Может возникнуть, если элементы формы события отсутствуют.
   function openEventForm(event = null) {
     const isEdit = Boolean(event);
+    // getElementById получает поля формы события и заполняет их данными
+    // выбранного события или значениями по умолчанию для новой записи.
     document.getElementById("event-form-title").textContent = isEdit ? "Редактировать событие" : "Добавить событие";
     document.getElementById("event-id").value = event?.id ?? "";
     document.getElementById("event-type").value = event?.type ?? "lesson";
@@ -738,11 +740,15 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   document.getElementById("create-group-button").addEventListener("click", () => openModal("group-modal"));
+  // addEventListener открывает модальное окно входа в группу по коду.
   document.getElementById("join-group-button").addEventListener("click", () => openModal("join-modal"));
+  // addEventListener открывает форму события только для старосты группы.
   document.getElementById("add-event-button").addEventListener("click", () => {
     if (canManage(getCurrentGroup())) openEventForm();
   });
 
+  // Делегированный addEventListener обрабатывает клики по модальным окнам,
+  // карточкам событий и кнопкам редактирования/удаления внутри динамической разметки.
   document.addEventListener("click", (event) => {
     if (event.target.matches("[data-close-modal]") || event.target.classList.contains("modal")) {
       closeModals();
@@ -768,6 +774,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // addEventListener с событием submit создает новую группу из данных формы.
   document.getElementById("group-form").addEventListener("submit", (event) => {
     event.preventDefault();
     const name = document.getElementById("group-name").value.trim();
@@ -798,11 +805,13 @@ document.addEventListener("DOMContentLoaded", () => {
     groups.push(group);
     saveGroups(groups);
     updateSession({ currentGroupId: group.id });
+    // getElementById находит поле названия группы, чтобы очистить его после сохранения.
     document.getElementById("group-name").value = "";
     closeModals();
     renderGroup();
   });
 
+  // addEventListener с событием submit присоединяет пользователя к группе по коду.
   document.getElementById("join-form").addEventListener("submit", (event) => {
     event.preventDefault();
     const code = document.getElementById("join-code").value.trim().toUpperCase();
@@ -811,6 +820,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const group = groups.find((item) => item.code === code);
 
     if (!group) {
+      // getElementById выводит сообщение об ошибке рядом с формой присоединения.
       document.getElementById("join-message").textContent = "Группа с таким кодом не найдена.";
       return;
     }
@@ -822,12 +832,14 @@ document.addEventListener("DOMContentLoaded", () => {
     saveGroups(groups);
     selectedEventId = null;
     updateSession({ currentGroupId: group.id });
+    // getElementById очищает поле кода и сообщение после успешного входа в группу.
     document.getElementById("join-code").value = "";
     document.getElementById("join-message").textContent = "";
     closeModals();
     renderGroup();
   });
 
+  // addEventListener с событием submit сохраняет новое или отредактированное событие.
   document.getElementById("event-form").addEventListener("submit", (event) => {
     event.preventDefault();
     const existingId = document.getElementById("event-id").value;
@@ -847,6 +859,8 @@ document.addEventListener("DOMContentLoaded", () => {
     closeModals();
   });
 
+  // Делегированный addEventListener ловит отправку формы комментария,
+  // потому что форма комментария создается заново при перерисовке деталей события.
   document.addEventListener("submit", (event) => {
     if (event.target.id !== "comment-form") return;
     event.preventDefault();
