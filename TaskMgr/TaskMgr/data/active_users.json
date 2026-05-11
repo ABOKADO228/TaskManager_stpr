@@ -28,5 +28,35 @@
     "comments_count": 1,
     "notes_count": 1,
     "groups_joined": 1
+  },
+  {
+    "nick": "Sergay",
+    "description": "Введение мероприятий",
+    "active_date": "2007-07-07",
+    "phone": "+70039853452",
+    "events_created": 17,
+    "comments_count": 23,
+    "notes_count": 3,
+    "groups_joined": 12
+  },
+  {
+    "nick": "Serg",
+    "description": "Роспись дз",
+    "active_date": "2007-05-04",
+    "phone": "+79939876800",
+    "events_created": 2,
+    "comments_count": 6,
+    "notes_count": 2,
+    "groups_joined": 1
+  },
+  {
+    "nick": "Пользователь",
+    "description": "12356436435",
+    "active_date": "2000-07-07",
+    "phone": "+79939876800",
+    "events_created": 3,
+    "comments_count": 2,
+    "notes_count": 4,
+    "groups_joined": 5
   }
 ]
