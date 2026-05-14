@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ru">
 <head>
   <link rel="stylesheet" type="text/css" href="/static/content/css/auth-reg/auth-reg.css" />
@@ -76,6 +76,11 @@
           <input class="input" type="password" placeholder="Минимум 4 символа" id="register-password" autocomplete="new-password" />
         </label>
 
+        <label class="field">
+          <span>Повтор пароля</span>
+          <input class="input" type="password" placeholder="Повторите пароль" id="register-password-repeat" autocomplete="new-password" />
+        </label>
+
         <button class="btn" type="submit">Зарегистрироваться</button>
         <p class="message" id="register-message" aria-live="polite"></p>
       </form>
@@ -84,14 +89,8 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      const USERS_KEY = "taskmgr_users";
       const SESSION_KEY = "taskmgr_session";
       const redirectTarget = getRedirectTarget();
-
-      const legacyUsers = [
-        { id: "user-admin", username: "admin", displayName: "Администратор", password: "1234" },
-        { id: "user-user1", username: "user1", displayName: "Пользователь", password: "1111" }
-      ];
 
       function readJson(key, fallback) {
         try {
@@ -105,64 +104,17 @@
         localStorage.setItem(key, JSON.stringify(value));
       }
 
-      // Возвращает безопасный адрес для перехода после входа.
-      //
-      // @returns
-      // Внутренний путь сайта из параметра next или /main по умолчанию.
-      //
-      // @throws
-      // Не выбрасывает исключения напрямую.
-      //
-      // @note
-      // Проверка запрещает внешние URL, чтобы параметр next не стал открытым редиректом.
       function getRedirectTarget() {
         const next = new URLSearchParams(window.location.search).get("next");
         if (!next || !next.startsWith("/") || next.startsWith("//")) return "/main";
         return next;
       }
 
-      // Сохраняет серверно-читаемые cookie текущего пользователя.
-      //
-      // @param user
-      // Пользователь, который успешно вошел или зарегистрировался.
-      //
-      // @param remember
-      // Флаг "Запомнить вход"; при true cookie живут 30 дней.
-      //
-      // @returns
-      // Не возвращает значение.
-      //
-      // @throws
-      // Не выбрасывает исключения напрямую.
-      //
-      // @note
-      // Cookie нужны Bottle-маршруту /orders, потому что backend не может
-      // прочитать localStorage браузера.
       function saveAuthCookies(user, remember) {
         const maxAge = remember ? "; max-age=2592000" : "";
         document.cookie = `taskmgr_user_id=${encodeURIComponent(user.id)}; path=/; SameSite=Lax${maxAge}`;
         document.cookie = `taskmgr_username=${encodeURIComponent(user.username)}; path=/; SameSite=Lax${maxAge}`;
         document.cookie = `taskmgr_display_name=${encodeURIComponent(user.displayName)}; path=/; SameSite=Lax${maxAge}`;
-      }
-
-      function ensureUsers() {
-        const users = readJson(USERS_KEY, []);
-        let changed = false;
-        legacyUsers.forEach((seed) => {
-          if (!users.some((user) => user.username === seed.username)) {
-            users.push(seed);
-            changed = true;
-          }
-        });
-        if (changed) writeJson(USERS_KEY, users);
-        return users;
-      }
-
-      function setMessage(id, text, type = "error") {
-        const el = document.getElementById(id);
-        if (!el) return;
-        el.textContent = text;
-        el.dataset.type = type;
       }
 
       function createSession(user, remember) {
@@ -186,11 +138,49 @@
         saveAuthCookies(user, remember);
       }
 
-      function normalizeLogin(value) {
-        return value.trim().toLowerCase();
+      function setMessage(id, text, type = "error") {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.textContent = text;
+        el.dataset.type = type;
       }
 
-      ensureUsers();
+      function clearMessage(id) {
+        setMessage(id, "");
+      }
+
+      function setFormBusy(formId, busy) {
+        const form = document.getElementById(formId);
+        if (!form) return;
+        form.querySelectorAll("button, input").forEach((element) => {
+          if (element.type === "checkbox") return;
+          element.disabled = busy;
+        });
+      }
+
+      async function postJson(url, body) {
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(body)
+        });
+
+        let data = {};
+        try {
+          data = await response.json();
+        } catch {
+          data = {};
+        }
+
+        if (!response.ok) {
+          const message = data.message || Object.values(data.errors || {})[0] || "Не удалось выполнить запрос.";
+          throw new Error(message);
+        }
+
+        return data;
+      }
 
       const savedSession = readJson(SESSION_KEY, null);
       if (savedSession && localStorage.getItem("isAuth") === "true") {
@@ -211,13 +201,16 @@
         document.querySelectorAll(".tab").forEach((tab) => tab.classList.remove("active"));
         document.getElementById(btn.dataset.go)?.classList.add("active");
         btn.classList.add("active");
+        clearMessage("login-message");
+        clearMessage("register-message");
       });
 
-      document.getElementById("screen-login").addEventListener("submit", (event) => {
+      document.getElementById("screen-login").addEventListener("submit", async (event) => {
         event.preventDefault();
-        const users = ensureUsers();
-        const username = normalizeLogin(document.getElementById("login-name").value);
-        const password = document.getElementById("login-password").value;
+        clearMessage("login-message");
+
+        const username = (document.getElementById("login-name").value || "").trim().toLowerCase();
+        const password = document.getElementById("login-password").value || "";
         const remember = document.getElementById("remember").checked;
 
         if (!username || !password) {
@@ -225,25 +218,29 @@
           return;
         }
 
-        const user = users.find((item) => item.username === username);
-        if (!user || user.password !== password) {
-          setMessage("login-message", "Неверный логин или пароль.");
-          return;
+        setFormBusy("screen-login", true);
+        try {
+          const data = await postJson("/api/auth/login", { username, password });
+          createSession(data.user, remember);
+          window.location.href = redirectTarget;
+        } catch (error) {
+          setMessage("login-message", error.message || "Неверный логин или пароль.");
+        } finally {
+          setFormBusy("screen-login", false);
         }
-
-        createSession(user, remember);
-        window.location.href = redirectTarget;
       });
 
-      document.getElementById("screen-register").addEventListener("submit", (event) => {
+      document.getElementById("screen-register").addEventListener("submit", async (event) => {
         event.preventDefault();
-        const users = ensureUsers();
-        const displayName = document.getElementById("register-display-name").value.trim();
-        const username = normalizeLogin(document.getElementById("register-name").value);
-        const password = document.getElementById("register-password").value;
+        clearMessage("register-message");
 
-        if (!displayName || !username || !password) {
-          setMessage("register-message", "Заполните имя, логин и пароль.");
+        const displayName = document.getElementById("register-display-name").value.trim();
+        const username = (document.getElementById("register-name").value || "").trim().toLowerCase();
+        const password = document.getElementById("register-password").value || "";
+        const passwordRepeat = document.getElementById("register-password-repeat").value || "";
+
+        if (!displayName || !username || !password || !passwordRepeat) {
+          setMessage("register-message", "Заполните имя, логин, пароль и повтор пароля.");
           return;
         }
 
@@ -252,22 +249,26 @@
           return;
         }
 
-        if (users.some((user) => user.username === username)) {
-          setMessage("register-message", "Такой логин уже занят.");
+        if (password !== passwordRepeat) {
+          setMessage("register-message", "Пароли не совпадают.");
           return;
         }
 
-        const user = {
-          id: `user-${Date.now()}`,
-          username,
-          displayName,
-          password
-        };
-
-        users.push(user);
-        writeJson(USERS_KEY, users);
-        createSession(user, true);
-        window.location.href = redirectTarget;
+        setFormBusy("screen-register", true);
+        try {
+          const data = await postJson("/api/auth/register", {
+            display_name: displayName,
+            username,
+            password,
+            password_repeat: passwordRepeat
+          });
+          createSession(data.user, true);
+          window.location.href = redirectTarget;
+        } catch (error) {
+          setMessage("register-message", error.message || "Не удалось зарегистрировать пользователя.");
+        } finally {
+          setFormBusy("screen-register", false);
+        }
       });
     });
   </script>

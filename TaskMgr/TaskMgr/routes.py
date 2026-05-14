@@ -1,10 +1,20 @@
 # Маршруты и представления Bottle-приложения.
 
+import json
 from datetime import date
 from urllib.parse import unquote
 
-from bottle import redirect, request, route, view
+from bottle import HTTPResponse, redirect, request, route, view
 
+from auth_service import (
+    build_user,
+    find_user_by_username,
+    load_users,
+    normalize_username,
+    public_user_view,
+    save_users,
+    validate_registration_form,
+)
 from active_user_service import (
     build_active_user,
     empty_user_form,
@@ -21,6 +31,27 @@ from order_service import (
     save_orders,
     validate_order,
 )
+
+
+def json_response(payload, status=200):
+    return HTTPResponse(
+        body=json.dumps(payload, ensure_ascii=False),
+        status=status,
+        content_type="application/json",
+    )
+
+
+def read_auth_payload():
+    json_payload = request.json if isinstance(request.json, dict) else {}
+    if json_payload:
+        return json_payload
+
+    return {
+        "display_name": request.forms.getunicode("display_name") or "",
+        "username": request.forms.getunicode("username") or "",
+        "password": request.forms.getunicode("password") or "",
+        "password_repeat": request.forms.getunicode("password_repeat") or "",
+    }
 
 
 # Получает пользователя из cookie, созданной страницей входа.
@@ -65,11 +96,43 @@ def main():
 # Отображает страницу входа и регистрации.
 # @returns словарь контекста для шаблона views/reg-auth.tpl.
 # @throws не выбрасывает исключения напрямую.
-# @note в текущем прототипе регистрация и вход реализованы на клиенте.
+# @note в текущем прототипе регистрация и вход проходят через JSON-эндпоинты на этом же сервере.
 @route("/reg-auth")
 @view("./reg-auth")
 def reg_auth():
     return {}
+
+
+@route("/api/auth/login", method="POST")
+def api_login():
+    form = read_auth_payload()
+    username = normalize_username(form.get("username"))
+    password = str(form.get("password") or "")
+
+    if not username or not password:
+        return json_response({"ok": False, "message": "Введите логин и пароль."}, 400)
+
+    user = find_user_by_username(load_users(), username)
+    if not user or user.get("password") != password:
+        return json_response({"ok": False, "message": "Неверный логин или пароль."}, 401)
+
+    return json_response({"ok": True, "user": public_user_view(user)})
+
+
+@route("/api/auth/register", method="POST")
+def api_register():
+    form = read_auth_payload()
+    users = load_users()
+    errors = validate_registration_form(form, users)
+
+    if errors:
+        return json_response({"ok": False, "errors": errors}, 400)
+
+    user = build_user(form)
+    users.append(user)
+    save_users(users)
+
+    return json_response({"ok": True, "user": public_user_view(user)})
 
 
 # Отображает страницу оформленных заказов с чистой формой добавления.
@@ -106,7 +169,6 @@ def add_order():
     if not current_user:
         redirect("/reg-auth?next=/orders")
 
-    # Копируем только ожидаемые поля, чтобы лишние данные не попали в JSON.
     form = {
         "number": (request.forms.getunicode("number") or "").strip(),
         "author": (request.forms.getunicode("author") or "").strip(),
