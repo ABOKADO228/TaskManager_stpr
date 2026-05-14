@@ -74,7 +74,6 @@
         <div class="section__head">
           <div>
             <h2>Рекомендуемые режимы работы</h2>
-            <p>Структура секции вдохновлена крупными медиа-лендингами: большие карточки, яркий визуал, короткий оффер и понятный сценарий входа.</p>
           </div>
           <span class="link-more">4 режима</span>
         </div>
@@ -135,7 +134,6 @@
               <div class="dashboard__header">
                 <div>
                   <h3>Сегодня в TaskMgr</h3>
-                  <p style="color: var(--muted); margin-top: 6px;">Пример панели задач для пользователя.</p>
                 </div>
                 <span class="tag tag--blue">4 задачи</span>
               </div>

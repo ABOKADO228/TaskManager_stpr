@@ -1,0 +1,32 @@
+[
+  {
+    "id": "user-admin",
+    "username": "admin",
+    "displayName": "Администратор",
+    "password": "1234"
+  },
+  {
+    "id": "user-user1",
+    "username": "user1",
+    "displayName": "Пользователь",
+    "password": "1111"
+  },
+  {
+    "id": "user-07515087b43b",
+    "username": "abokado22",
+    "displayName": "Anton",
+    "password": "1234"
+  },
+  {
+    "id": "user-9af1ca73b9fe",
+    "username": "abokado222",
+    "displayName": "ABOKADO222",
+    "password": "Toxa22082007%"
+  },
+  {
+    "id": "user-e4d1de58c09a",
+    "username": "anton123",
+    "displayName": "anton",
+    "password": "Toxa22082007*"
+  }
+]

@@ -31,7 +31,6 @@
         <p>
           Здесь показаны только заказы пользователя:
           {{current_user.get("display_name", current_user.get("username", ""))}}.
-          Новые записи сохраняются в JSON-файл и сразу появляются в списке.
         </p>
       </div>
       <div class="orders-count">
